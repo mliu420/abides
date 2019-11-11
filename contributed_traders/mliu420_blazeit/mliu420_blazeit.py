@@ -45,6 +45,10 @@ class mliu420_blazeit(TradingAgent):
         self.orders_executed = 0
     
     def receiveMessage(self, currentTime, msg):
+        dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
+            if dt < 25:
+                self.dump_shares()
+                return 0
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
         if msg.body['msg'] == 'ORDER_EXECUTED':
@@ -64,8 +68,7 @@ class mliu420_blazeit(TradingAgent):
             #use a condition to see if holdings close to reduce exposure to JPM
             #self.fOrderTime = currentTime
             if len(self.orders) == 0:
-                self.state == 'AWAITING_SPREAD'
-                self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+                self.setWakeup(currentTime + self.getWakeFrequency())
                 self.orders_executed = 0
             elif self.cancelCheck:
                 self.cancelOrders()
@@ -73,8 +76,7 @@ class mliu420_blazeit(TradingAgent):
             if len(self.orders) == 0:
                 self.orders_executed = 0
                 self.can_cancel_request = False
-                self.state == 'AWAITING_SPREAD'
-                self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+                self.setWakeup(currentTime + self.getWakeFrequency())
     
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
@@ -133,3 +135,10 @@ class mliu420_blazeit(TradingAgent):
                 self.setWakeup(currentTime + self.getWakeFrequency())
     def getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)
+    def dump_shares(self):
+    # get rid of any outstanding shares we have
+    if self.symbol in self.holdings and len(self.orders) == 0:
+        order_size = self.holdings[self.symbol]
+        bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
+        if bid:
+            self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
