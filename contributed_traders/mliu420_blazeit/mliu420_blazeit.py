@@ -38,7 +38,7 @@ class mliu420_blazeit(TradingAgent):
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
         #check if current time greater than wait time
-        if self.cancelCheck(CurrentTime):
+        if self.cancelCheck(currentTime):
             self.cancelOrders()
         self.getCurrentSpread(self.symbol, depth=self.depthLevels)
         self.state = 'AWAITING_SPREAD'
