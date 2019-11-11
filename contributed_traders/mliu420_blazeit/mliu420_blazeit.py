@@ -104,7 +104,8 @@ class mliu420_blazeit(TradingAgent):
                         dist = askVol / (askVol + bidVol)
                         if dist > 0.7:
                             distProp = 0.7
-                        else distProp = 1
+                        else:
+                            distProp = 1
                         askP = distProp * askP + (1-distProp) * midP
                         bidP = (1-distProp) * bidP + distProp * midP
                         
