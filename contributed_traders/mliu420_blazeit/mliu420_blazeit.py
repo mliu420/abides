@@ -43,6 +43,10 @@ class mliu420_blazeit(TradingAgent):
         self.state = 'AWAITING_SPREAD'
         print('true holdings??')
         print(self.holdings)
+        print('true 2')
+        print(self.getHoldings('CASH'))
+        print(self.getHoldings(self.symbol))
+
 
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
