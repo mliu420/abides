@@ -89,8 +89,8 @@ class mliu420_blazeit(TradingAgent):
                         bidVol = round(self.holdings['CASH'] / bidP / 2)
                         askVol = round(self.holdings['CASH'] / askP / 2)
                         try:
-                            bidVol += max(0, -self.holdings[self.symbol])
-                            askVol += max(0, self.holdings[self.symbol])
+                            bidVol += max(0, self.holdings[self.symbol])
+                            askVol += max(0, -self.holdings[self.symbol])
                         except:
                             pass
                         self.placeLimitOrder(self.symbol, bidVol, True, bidP)
