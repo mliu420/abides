@@ -79,6 +79,7 @@ class mliu420_blazeit(TradingAgent):
                             sumBid += bid[i][1] * bid[i][0]
                             
                         print(sumBidVol)
+                        print(sumBid)
                     if sumAskVol < 100:
                         if sumAskVol + ask[i][1] > self.pricingVolume:
                             sumAskVol = self.pricingVolume
