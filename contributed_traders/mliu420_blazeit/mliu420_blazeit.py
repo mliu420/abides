@@ -101,7 +101,7 @@ class mliu420_blazeit(TradingAgent):
                         except:
                             pass
                         askP = round((2*askP * bidVol + (0.5 * bidP + 0.5 * askP) * askVol) / (bidVol + askVol))
-                        bidP = round((2*bidP * askVol + (0.5 * bidP + 0.5 * askP) * bidVol) / (bidVol + askVol))
+                        bidP = round((0.5*bidP * askVol + (0.5 * bidP + 0.5 * askP) * bidVol) / (bidVol + askVol))
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
                             #self.pOrders += 1
