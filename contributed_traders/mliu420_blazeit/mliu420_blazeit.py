@@ -58,6 +58,7 @@ class mliu420_blazeit(TradingAgent):
             
     def calculateAndOrder(self, currentTime):
         bid, ask = self.getKnownBidAsk(self.symbol, best=False)
+        print('got bid and ask')
         if bid and ask:
             sumBid = 0
             sumBidVol = 0
@@ -87,7 +88,6 @@ class mliu420_blazeit(TradingAgent):
                         self.logEvent('PRICE BID BEST', bid[i])
                         self.logEvent('PRICE ASK', askP)
                         self.logEvent('PRICE BID', askP)
-                        self.placeLimitOrder(self.symbol, )
                         askVol = self.holdings['CASH'] / askP + max(0, self.holdings[self.symbol])
                         bidVol = self.holdings['CASH'] / bidP + max(0, -self.holdings[self.symbol])
                         self.placeLimitOrder(self.symbol, bidVol, True, bidP)
@@ -95,6 +95,8 @@ class mliu420_blazeit(TradingAgent):
                         self.placeLimitOrder(self.symbol, askVol, False, askP)
                         self.paOrders += 1
                         self.state = 'AWAITING_CONFIRMATION' #place orders and await execution
+                        print('placed order')
+                        self.setWakeup(currentTime + self.getWakeFrequency())
             except:
                 self.setWakeup(currentTime + self.getWakeFrequency())
     def getWakeFrequency(self):
