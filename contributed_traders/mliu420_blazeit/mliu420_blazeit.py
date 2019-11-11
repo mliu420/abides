@@ -91,7 +91,6 @@ class mliu420_blazeit(TradingAgent):
                         print(self.holdings['CASH'])
                         print(bidP)
                         print(self.holdings)
-                        print(max(0, -self.holdings[self.symbol]))
                         bidVol = self.holdings['CASH'] / bidP
                         askVol = self.holdings['CASH'] / askP
                         try:
@@ -99,8 +98,8 @@ class mliu420_blazeit(TradingAgent):
                             askVol += max(0, self.holdings[self.symbol])
                         except:
                             pass
+                        print(bidVol)
                         print(askVol)
-
                         self.placeLimitOrder(self.symbol, bidVol, True, bidP)
                         self.placeLimitOrder(self.symbol, askVol, False, askP)
                         print('placed order')
