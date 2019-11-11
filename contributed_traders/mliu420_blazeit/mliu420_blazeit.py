@@ -109,7 +109,7 @@ class mliu420_blazeit(TradingAgent):
                             sumBid += (self.pricingVolume - bid[i][1]) * bid[i][0]
                         else:
                             sumBid += bid[i][1] * bid[i][0]
-                    if sumAskVol < 100
+                    if sumAskVol < 100:
                         if sumAskVol + ask[i][1] > self.pricingVolume:
                             sumAskVol = self.pricingVolume
                             sumAsk += (self.pricingVolume - ask[i][1]) * ask[i][0]
