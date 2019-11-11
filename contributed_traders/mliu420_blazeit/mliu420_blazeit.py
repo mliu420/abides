@@ -47,10 +47,13 @@ class mliu420_blazeit(TradingAgent):
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
-        dt = (self.mkt_close - currentTime).totalSeconds()
-        if dt < 25:
-            self.dump_shares()
-            return 0
+        try:
+            dt = (self.mkt_close - currentTime).totalSeconds()
+            if dt < 25:
+                self.dump_shares()
+                return 0
+        except:
+            pass
 
         if msg.body['msg'] == 'ORDER_EXECUTED':
             self.orders_executed += 1
