@@ -53,7 +53,7 @@ class mliu420_blazeit(TradingAgent):
         super().receiveMessage(currentTime, msg)
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
-            
+        print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
         for _, order in self.orders.items():
