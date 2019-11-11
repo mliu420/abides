@@ -1,78 +1,134 @@
 from agent.TradingAgent import TradingAgent
 import pandas as pd
-import numpy as np
-import os
-from contributed_traders.util import get_file
 
-class SimpleAgent(TradingAgent):
+
+class MarketMakerAgent(TradingAgent):
     """
-    Simple Trading Agent that compares the past mid-price observations and places a
-    buy limit order if the first window mid-price exponential average >= the second window mid-price exponential average or a
-    sell limit order if the first window mid-price exponential average < the second window mid-price exponential average
+    Mingchun Liu's Market Making Algo
     """
 
-    def __init__(self, id, name, type, symbol, starting_cash,
-                 min_size, max_size, wake_up_freq='60s',
+    def __init__(self, id, name, type, symbol, starting_cash, min_size, max_size , wake_up_freq='10s',
                  log_orders=False, random_state=None):
 
         super().__init__(id, name, type, starting_cash=starting_cash, log_orders=log_orders, random_state=random_state)
-        self.symbol = symbol
+        self.symbol = symbol      # Symbol traded
         self.min_size = min_size  # Minimum order size
         self.max_size = max_size  # Maximum order size
-        self.size = self.random_state.randint(self.min_size, self.max_size)
-        self.wake_up_freq = wake_up_freq
-        self.mid_list, self.avg_win1_list, self.avg_win2_list = [], [], []
+        self.size = round(self.random_state.randint(self.min_size, self.max_size) / 2) # order size per LOB side
+        self.wake_up_freq = wake_up_freq # Frequency of agent wake up
         self.log_orders = log_orders
         self.state = "AWAITING_WAKEUP"
-        #self.window1 = 100 
-        #self.window2 = 5 
+        # Percentage of the order size to be placed at different levels is determined by levels_quote_dict
+        self.levels_quote_dict = {1: [1, 0, 0, 0, 0],
+                                  2: [.5, .5, 0, 0, 0],
+                                  3: [.34, .33, .33, 0, 0],
+                                  4: [.25, .25, .25, .25, 0],
+                                  5: [.20, .20, .20, .20, .20]}
+        ######################
+        self.orders_executed = 0
+        self.can_cancel_request = False
+        self.paOrders = 0
+        #parameters
+        self.pricingVolume = 100
+        self.depthLevels = 10
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
-        # Read in the configuration through util
-        with open(get_file('simple_agent.cfg'), 'r') as f:
-            self.window1, self.window2 = [int(w) for w in f.readline().split()]
-        #print(f"{self.window1} {self.window2}")
 
     def wakeup(self, currentTime):
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
-        self.getCurrentSpread(self.symbol)
+        #check if current time greater than wait time
+        if self.cancelCheck(CurrentTime):
+            self.cancelOrders()
+        self.getCurrentSpread(self.symbol, depth=self.depthLevels)
         self.state = 'AWAITING_SPREAD'
-
-    def dump_shares(self):
-        # get rid of any outstanding shares we have
-        if self.symbol in self.holdings and len(self.orders) == 0:
-            order_size = self.holdings[self.symbol]
-            bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
-            if bid:
-                self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
-
+        self.orders_executed = 0
+    
     def receiveMessage(self, currentTime, msg):
-        """ Momentum agent actions are determined after obtaining the best bid and ask in the LOB """
+        """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
+        if msg.body['msg'] == 'ORDER_EXECUTED':
+            self.orders_executed += 1
+        if msg.body['msg'] == 'ORDER_ACCEPTED':
+            self.can_cancel_request = True
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
-            dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
-            if dt < 25:
-                self.dump_shares()
-            else:
-                bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
-                if bid and ask:
-                    self.mid_list.append((bid + ask) / 2)
-                    if len(self.mid_list) > self.window1: self.avg_win1_list.append(pd.Series(self.mid_list).ewm(span=self.window1).mean().values[-1].round(2))
-                    if len(self.mid_list) > self.window2: self.avg_win2_list.append(pd.Series(self.mid_list).ewm(span=self.window2).mean().values[-1].round(2))
-                    if len(self.avg_win1_list) > 0 and len(self.avg_win2_list) > 0 and len(self.orders) == 0:
-                        if self.avg_win1_list[-1] >= self.avg_win2_list[-1]:
-                            # Check that we have enough cash to place the order
-                            if self.holdings['CASH'] >= (self.size * ask):
-                                self.placeLimitOrder(self.symbol, quantity=self.size, is_buy_order=True, limit_price=ask)
-                        else:
-                            if self.symbol in self.holdings and self.holdings[self.symbol] > 0:
-                                order_size = min(self.size, self.holdings[self.symbol])
-                                self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=bid)
+            self.calculateAndOrder()
             self.setWakeup(currentTime + self.getWakeFrequency())
-            self.state = 'AWAITING_WAKEUP'
-
+            self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+        #do nothing till other leg executed
+        elif self.state == 'AWAITING CONFIRMATION' and msg.body['msg'] == 'ORDER_ACCEPTED':
+            self.paOrders -= 1
+            if self.paOrders == 0:
+                self.state = 'AWAITING EXECUTION'
+                self.exec_time_order = currentTime
+        elif self.state == 'AWAITING_EXECUTION' and msg.body['msg'] == 'ORDER_EXECUTED':
+            #use a condition to see if holdings close to reduce exposure to JPM
+            #self.fOrderTime = currentTime
+            if len(self.orders) == 0:
+                self.state == 'AWAITING_SPREAD'
+                self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+                self.orders_executed = 0
+            elif self.cancelCheck:
+                self.cancelOrders()
+        elif msg.body['msg'] == 'ORDER_CANCELLED':
+            if len(self.orders) == 0:
+                self.orders_executed = 0
+                self.can_cancel_request = False
+                self.state == 'AWAITING_SPREAD'
+                self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+    
+    def cancelOrders(self):
+        """ cancels all resting limit orders placed by the market maker """
+        for _, order in self.orders.items():
+            self.cancelOrder(order)
+        self.can_cancel_request = False
+            
+    def cancelCheck(self, currentTime):
+        if self.orders and self.can_cancel_request:
+            if self.orders_executed == 0:
+                return True
+            else:
+                try:
+                    if int(currentTime - self.exec_time_order).totalSeconds() >= 5:
+                        return True
+                except:
+                    self.exec_time_order = currentTime
+        return False
+    
+    def calculateAndOrder():
+        bid, bid_vol, ask, ask_vol = self.getKnownBidAsk(self.symbol, best=True)
+        if bids and asks:
+            sumBid = 0
+            sumBidVol = 0
+            sumAsk = 0
+            sumAskVol = 0
+            for i in range(self.depthLevels):
+                if sumBidVol + bid_vol[i][0] > self.pricingVolume:
+                    sumBidVol = self.pricingVolume
+                    sumBid += (self.PricingVolume - bid_vol[i][0]) * bid[i][0]
+                else:
+                    sumBid += bid_vol[i][0] * bid[i][0]
+                    
+                if sumAskVol + ask_vol[i][0] > self.pricingVolume:
+                    sumAskVol = self.pricingVolume
+                    sumAsk += (self.PricingVolume - ask_vol[i][0]) * ask[i][0]
+                else:
+                    sumAsk += ask_vol[i][0] * ask[i][0]
+                
+            if sumBid == sumAsk:
+                if sumBid == self.pricingVolume:
+                    askP = sumAsk / self.pricingVolume
+                    bidP = sumBid / self.pricingVolume
+                    self.placeLimitOrder(self.symbol, )
+                    askVol = self.holdings['CASH'] / askP + max(0, self.holdings[self.symbol])
+                    bidVol = self.holdings['CASH'] / bidP + max(0, -self.holdings[self.symbol])
+                    self.placeLimitOrder(self.symbol, bidVol, True, bidP)
+                    self.paOrders += 1
+                    self.placeLimitOrder(self.symbol, askVol, False, askP)
+                    self.paOrders += 1
+                    self.state = 'AWAITING_CONFIRMATION' #place orders and await execution
+    
     def getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)

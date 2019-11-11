@@ -1,0 +1,54 @@
+wake up
+cancel orders?
+get spread
+
+
+got spread
+calculate price
+there are orders?
+	is time up?
+		cancel orders
+else 
+	PLACEORDER
+
+
+order executed
+orders_exec = 1
+start timer
+no orders out?
+	orders_exec = 0
+	PLACEORDER
+	
+else if time is up
+	cancel orders
+get spread
+
+
+orders cancelled
+no orders?
+	orders_exec = 0
+	PLACEORDER
+get spread
+
+
+PLACEORDER
+put all holdings for sale
+remaining cash split 50-50
+	
+
+
+get spread
+
+wait spread got spread
+place order
+waiting order
+
+wait order and got order confirmation
+awaiting execution
+
+got execution
+if awaiting execution
+	place orders
+is orders and is time up
+
+if no execution 
