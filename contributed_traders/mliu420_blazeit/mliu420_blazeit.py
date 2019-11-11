@@ -88,9 +88,9 @@ class mliu420_blazeit(TradingAgent):
                         bidVol = round(max(0, self.holdings['CASH']) / bidP / 2)
                         askVol = round(max(0, self.holdings['CASH']) / askP / 2)
                         try:
-                            print('bidvol, askvol, jpm',bidVol, askVol, self.holdings[self.symbol])
-                            bidVol += max(0, -self.holdings[self.symbol])
-                            askVol -= max(0, -self.holdings[self.symbol])
+                            print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
+                            bidVol = max(0, -self.holdings[self.symbol])
+                            askVol = max(0, self.holdings[self.symbol])
                             print('bidvol, askvol, jpm',bidVol, askVol, self.holdings[self.symbol])
                         except:
                             pass
