@@ -90,7 +90,7 @@ class mliu420_blazeit(TradingAgent):
                         print('bid stats')
                         print(self.holdings['CASH'])
                         print(bidP)
-                        print(self.holdings[self.symbol])
+                        print(self.holdings)
                         print(max(0, -self.holdings[self.symbol]))
                         bidVol = self.holdings['CASH'] / bidP + max(0, -self.holdings[self.symbol])
                         print('ask stats')
