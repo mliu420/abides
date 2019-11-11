@@ -29,6 +29,7 @@ class mliu420_blazeit(TradingAgent):
         #parameters
         self.pricingVolume = 100
         self.depthLevels = 10
+        self.starting_cash = starting_cash
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
@@ -85,12 +86,12 @@ class mliu420_blazeit(TradingAgent):
                     if sumBidVol == self.pricingVolume:
                         askP = round(sumAsk / self.pricingVolume)
                         bidP = round(sumBid / self.pricingVolume)
-                        bidVol = round(max(0, self.holdings['CASH']) / bidP / 2)
-                        askVol = round(max(0, self.holdings['CASH']) / askP / 2)
+                        bidVol = round(max(0, self.starting_cash) / bidP / 2)
+                        askVol = round(max(0, self.starting_cash) / askP / 2)
                         try:
                             print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
-                            bidVol = max(0, -self.holdings[self.symbol])
-                            askVol = max(0, self.holdings[self.symbol])
+                            bidVol += max(0, -self.holdings[self.symbol])
+                            askVol += max(0, self.holdings[self.symbol])
                             print('bidvol, askvol, jpm',bidVol, askVol, self.holdings[self.symbol])
                         except:
                             pass
