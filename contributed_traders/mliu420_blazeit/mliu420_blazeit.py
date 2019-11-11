@@ -1,6 +1,6 @@
 from agent.TradingAgent import TradingAgent
 import pandas as pd
-
+import math
 
 class mliu420_blazeit(TradingAgent):
     """
@@ -88,8 +88,8 @@ class mliu420_blazeit(TradingAgent):
                     if sumBidVol == self.pricingVolume:
                         askP = round(sumAsk / self.pricingVolume)
                         bidP = round(sumBid / self.pricingVolume)
-                        bidVol = round(max(0, self.starting_cash) / bidP / 2)
-                        askVol = round(max(0, self.starting_cash) / askP / 2)
+                        bidVol = math.floor(max(0, self.starting_cash) / bidP / 2)
+                        askVol = math.floor(max(0, self.starting_cash) / askP / 2)
                         try:
                             print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
                             bidVol = max(0,bidVol - self.holdings[self.symbol])
