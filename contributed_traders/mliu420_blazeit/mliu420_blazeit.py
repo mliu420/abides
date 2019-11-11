@@ -93,8 +93,8 @@ class mliu420_blazeit(TradingAgent):
                             
                 if sumBidVol == sumAskVol:
                     if sumBidVol == self.pricingVolume:
-                        askP = round(sumAsk / self.pricingVolume)
-                        bidP = round(sumBid / self.pricingVolume)
+                        askP = sumAsk / self.pricingVolume
+                        bidP = sumBid / self.pricingVolume
                         bidVol = math.floor(max(0, self.starting_cash) / bidP / 2)
                         askVol = math.floor(max(0, self.starting_cash) / askP / 2)
                         try:
@@ -104,8 +104,8 @@ class mliu420_blazeit(TradingAgent):
                             print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
                         except:
                             pass
-                        askP = (askP * askVol + (0.5 * bidP + 0.5 * askP) * bidVol) / (bidVol + askVol)
-                        bidP = (bidP * bidVol + (0.5 * bidP + 0.5 * askP) * askVol) / (bidVol + askVol)
+                        askP = round((askP * askVol + (0.5 * bidP + 0.5 * askP) * bidVol) / (bidVol + askVol))
+                        bidP = round((bidP * bidVol + (0.5 * bidP + 0.5 * askP) * askVol) / (bidVol + askVol))
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
                             #self.pOrders += 1
