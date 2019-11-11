@@ -60,6 +60,9 @@ class mliu420_blazeit(TradingAgent):
         bid, ask = self.getKnownBidAsk(self.symbol, best=False)
         print('got bid and ask')
         if bid and ask:
+            print('bid and ask')
+            print(bid)
+            print(ask)
             sumBid = 0
             sumBidVol = 0
             sumAsk = 0
@@ -94,10 +97,10 @@ class mliu420_blazeit(TradingAgent):
                         self.paOrders += 1
                         self.placeLimitOrder(self.symbol, askVol, False, askP)
                         self.paOrders += 1
-                        self.state = 'AWAITING_CONFIRMATION' #place orders and await execution
                         print('placed order')
-                        self.setWakeup(currentTime + self.getWakeFrequency())
             except:
-                self.setWakeup(currentTime + self.getWakeFrequency())
+                pass
+            self.state = 'AWAITING_WAKEUP' #place orders and await execution
+            self.setWakeup(currentTime + self.getWakeFrequency())
     def getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)
