@@ -26,10 +26,6 @@ class mliu420_blazeit(TradingAgent):
         self.wake_up_freq = wake_up_freq # Frequency of agent wake up
         self.log_orders = log_orders
         self.state = "AWAITING_WAKEUP"
-        #My variables and parameters
-        self.orders_executed = 0
-        self.can_cancel_request = False
-        self.paOrders = 0
         #parameters
         self.pricingVolume = 100
         self.depthLevels = 10
@@ -91,12 +87,13 @@ class mliu420_blazeit(TradingAgent):
                         bidP = sumBid / self.pricingVolume
                         print('PRICE ASK', askP)
                         print('PRICE BID', bidP)
-                        askVol = self.holdings['CASH'] / askP + max(0, self.holdings[self.symbol])
                         bidVol = self.holdings['CASH'] / bidP + max(0, -self.holdings[self.symbol])
+                        print(bidVol)
+                        askVol = self.holdings['CASH'] / askP + max(0, self.holdings[self.symbol])
+                        print(askVol)
+
                         self.placeLimitOrder(self.symbol, bidVol, True, bidP)
-                        self.paOrders += 1
                         self.placeLimitOrder(self.symbol, askVol, False, askP)
-                        self.paOrders += 1
                         print('placed order')
             except Exception as e:
                 print(e)
