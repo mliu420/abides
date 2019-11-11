@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from contributed_traders.util import get_file
 
-class MarketMakerAgent(TradingAgent):
+class mliu420_blazeit(TradingAgent):
     """
     Mingchun Liu's Market Making Algo
     """
