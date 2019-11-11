@@ -95,7 +95,7 @@ class mliu420_blazeit(TradingAgent):
                     self.exec_time_order = currentTime
         return False
     
-    def calculateAndOrder():
+    def calculateAndOrder(self):
         bid, bid_vol, ask, ask_vol = self.getKnownBidAsk(self.symbol, best=True)
         if bids and asks:
             sumBid = 0
