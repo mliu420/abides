@@ -52,7 +52,7 @@ class mliu420_blazeit(TradingAgent):
         if msg.body['msg'] == 'ORDER_ACCEPTED':
             self.can_cancel_request = True
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
-            self.calculateAndOrder()
+            self.calculateAndOrder(currentTime)
             self.setWakeup(currentTime + self.getWakeFrequency())
         #do nothing till other leg executed
         elif self.state == 'AWAITING CONFIRMATION' and msg.body['msg'] == 'ORDER_ACCEPTED':
@@ -94,7 +94,7 @@ class mliu420_blazeit(TradingAgent):
                     self.exec_time_order = currentTime
         return False
     
-    def calculateAndOrder(self):
+    def calculateAndOrder(self, currentTime):
         bid, ask = self.getKnownBidAsk(self.symbol, best=False)
         if bid and ask:
             sumBid = 0
