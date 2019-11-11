@@ -102,8 +102,8 @@ class mliu420_blazeit(TradingAgent):
                         self.placeLimitOrder(self.symbol, askVol, False, askP)
                         self.paOrders += 1
                         print('placed order')
-            except:
-                print('exception')
+            except Exception as e:
+                print(e)
                 pass
             self.state = 'AWAITING_WAKEUP' #place orders and await execution
             self.setWakeup(currentTime + self.getWakeFrequency())
