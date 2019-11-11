@@ -4,7 +4,6 @@ import numpy as np
 import os
 import pandas as pd
 from contributed_traders.util import get_file
-import datetime
 
 class mliu420_blazeit(TradingAgent):
     """
@@ -46,12 +45,13 @@ class mliu420_blazeit(TradingAgent):
         self.orders_executed = 0
     
     def receiveMessage(self, currentTime, msg):
+        """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
+        super().receiveMessage(currentTime, msg)
         dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
         if dt < 25:
             self.dump_shares()
             return 0
-        """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
-        super().receiveMessage(currentTime, msg)
+
         if msg.body['msg'] == 'ORDER_EXECUTED':
             self.orders_executed += 1
         if msg.body['msg'] == 'ORDER_ACCEPTED':
