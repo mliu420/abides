@@ -73,7 +73,7 @@ class mliu420_blazeit(TradingAgent):
                         print('added to bid')
                         if sumBidVol + bid[i][1] > self.pricingVolume:
                             sumBidVol = self.pricingVolume
-                            sumBid += (self.pricingVolume - bid[i][1]) * bid[i][0]
+                            sumBid += (self.pricingVolume - sumBidVol) * bid[i][0]
                         else:
                             sumBidVol += bid[i][1]
                             sumBid += bid[i][1] * bid[i][0]
@@ -82,7 +82,7 @@ class mliu420_blazeit(TradingAgent):
                     if sumAskVol < 100:
                         if sumAskVol + ask[i][1] > self.pricingVolume:
                             sumAskVol = self.pricingVolume
-                            sumAsk += (self.pricingVolume - ask[i][1]) * ask[i][0]
+                            sumAsk += (self.pricingVolume - sumAskVol) * ask[i][0]
                         else:
                             sumAskVol += ask[i][1]
                             sumAsk += ask[i][1] * ask[i][0]
@@ -92,7 +92,7 @@ class mliu420_blazeit(TradingAgent):
                         askP = sumAsk / self.pricingVolume
                         bidP = sumBid / self.pricingVolume
                         print('PRICE ASK', askP)
-                        print('PRICE BID', askP)
+                        print('PRICE BID', bidP)
                         askVol = self.holdings['CASH'] / askP + max(0, self.holdings[self.symbol])
                         bidVol = self.holdings['CASH'] / bidP + max(0, -self.holdings[self.symbol])
                         self.placeLimitOrder(self.symbol, bidVol, True, bidP)
