@@ -46,6 +46,7 @@ class mliu420_blazeit(TradingAgent):
         super().receiveMessage(currentTime, msg)
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
+        print(msg)
             
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
@@ -85,12 +86,6 @@ class mliu420_blazeit(TradingAgent):
                     if sumBidVol == self.pricingVolume:
                         askP = sumAsk / self.pricingVolume
                         bidP = sumBid / self.pricingVolume
-                        print('PRICE ASK', askP)
-                        print('PRICE BID', bidP)
-                        print('bid stats')
-                        print(self.holdings['CASH'])
-                        print(bidP)
-                        print(self.holdings)
                         bidVol = self.holdings['CASH'] / bidP
                         askVol = self.holdings['CASH'] / askP
                         try:
@@ -98,8 +93,6 @@ class mliu420_blazeit(TradingAgent):
                             askVol += max(0, self.holdings[self.symbol])
                         except:
                             pass
-                        print(bidVol)
-                        print(askVol)
                         self.placeLimitOrder(self.symbol, bidVol, True, bidP)
                         self.placeLimitOrder(self.symbol, askVol, False, askP)
                         print('placed order')
