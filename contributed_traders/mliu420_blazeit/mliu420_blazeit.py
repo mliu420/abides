@@ -96,24 +96,24 @@ class mliu420_blazeit(TradingAgent):
         return False
     
     def calculateAndOrder(self):
-        bid, bid_vol, ask, ask_vol = self.getKnownBidAsk(self.symbol, best=True)
+        bid, ask = self.getKnownBidAsk(self.symbol, best=False)
         if bid and ask:
             sumBid = 0
             sumBidVol = 0
             sumAsk = 0
             sumAskVol = 0
             for i in range(self.depthLevels):
-                if sumBidVol + bid_vol[i][0] > self.pricingVolume:
+                if sumBidVol + bid[i][1] > self.pricingVolume:
                     sumBidVol = self.pricingVolume
-                    sumBid += (self.PricingVolume - bid_vol[i][0]) * bid[i][0]
+                    sumBid += (self.PricingVolume - bid[i][1]) * bid[i][0]
                 else:
-                    sumBid += bid_vol[i][0] * bid[i][0]
+                    sumBid += bid[i][1] * bid[i][0]
                     
-                if sumAskVol + ask_vol[i][0] > self.pricingVolume:
+                if sumAskVol + ask[i][1] > self.pricingVolume:
                     sumAskVol = self.pricingVolume
-                    sumAsk += (self.PricingVolume - ask_vol[i][0]) * ask[i][0]
+                    sumAsk += (self.PricingVolume - ask[i][1]) * ask[i][0]
                 else:
-                    sumAsk += ask_vol[i][0] * ask[i][0]
+                    sumAsk += ask[i][1] * ask[i][0]
                 
             if sumBid == sumAsk:
                 if sumBid == self.pricingVolume:
