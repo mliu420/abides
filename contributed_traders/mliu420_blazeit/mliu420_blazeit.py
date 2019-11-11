@@ -37,8 +37,8 @@ class mliu420_blazeit(TradingAgent):
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
-        self.cancelOrders()
-        self.getCurrentSpread(self.symbol, depth=5)
+        #self.cancelOrders()
+        self.getCurrentSpread(self.symbol, depth=self.depthLevels)
         self.state = 'AWAITING_SPREAD'
 
     def receiveMessage(self, currentTime, msg):
@@ -86,13 +86,15 @@ class mliu420_blazeit(TradingAgent):
                     if sumBidVol == self.pricingVolume:
                         askP = sumAsk / self.pricingVolume
                         bidP = sumBid / self.pricingVolume
-                        bidVol = self.holdings['CASH'] / bidP
-                        askVol = self.holdings['CASH'] / askP
-                        try:
-                            bidVol += max(0, -self.holdings[self.symbol])
-                            askVol += max(0, self.holdings[self.symbol])
-                        except:
-                            pass
+#                         bidVol = self.holdings['CASH'] / bidP
+#                         askVol = self.holdings['CASH'] / askP
+#                         try:
+#                             bidVol += max(0, -self.holdings[self.symbol])
+#                             askVol += max(0, self.holdings[self.symbol])
+#                         except:
+#                             pass
+                        bidVol = 1
+                        askVol = 1
                         self.placeLimitOrder(self.symbol, bidVol, True, bidP)
                         self.placeLimitOrder(self.symbol, askVol, False, askP)
                         print('placed order')
