@@ -102,34 +102,34 @@ class mliu420_blazeit(TradingAgent):
             sumAsk = 0
             sumAskVol = 0
             try:
-            for i in range(self.depthLevels):
-                if sumBidVol < 100:
-                    if sumBidVol + bid[i][1] > self.pricingVolume:
-                        sumBidVol = self.pricingVolume
-                        sumBid += (self.pricingVolume - bid[i][1]) * bid[i][0]
-                    else:
-                        sumBid += bid[i][1] * bid[i][0]
-                if sumAskVol < 100
-                    if sumAskVol + ask[i][1] > self.pricingVolume:
-                        sumAskVol = self.pricingVolume
-                        sumAsk += (self.pricingVolume - ask[i][1]) * ask[i][0]
-                    else:
-                        sumAsk += ask[i][1] * ask[i][0]
+                for i in range(self.depthLevels):
+                    if sumBidVol < 100:
+                        if sumBidVol + bid[i][1] > self.pricingVolume:
+                            sumBidVol = self.pricingVolume
+                            sumBid += (self.pricingVolume - bid[i][1]) * bid[i][0]
+                        else:
+                            sumBid += bid[i][1] * bid[i][0]
+                    if sumAskVol < 100
+                        if sumAskVol + ask[i][1] > self.pricingVolume:
+                            sumAskVol = self.pricingVolume
+                            sumAsk += (self.pricingVolume - ask[i][1]) * ask[i][0]
+                        else:
+                            sumAsk += ask[i][1] * ask[i][0]
+
+                
+                if sumBid == sumAsk:
+                    if sumBid == self.pricingVolume:
+                        askP = sumAsk / self.pricingVolume
+                        bidP = sumBid / self.pricingVolume
+                        self.placeLimitOrder(self.symbol, )
+                        askVol = self.holdings['CASH'] / askP + max(0, self.holdings[self.symbol])
+                        bidVol = self.holdings['CASH'] / bidP + max(0, -self.holdings[self.symbol])
+                        self.placeLimitOrder(self.symbol, bidVol, True, bidP)
+                        self.paOrders += 1
+                        self.placeLimitOrder(self.symbol, askVol, False, askP)
+                        self.paOrders += 1
+                        self.state = 'AWAITING_CONFIRMATION' #place orders and await execution
             except:
                 self.setWakeup(currentTime + self.getWakeFrequency())
-                
-            if sumBid == sumAsk:
-                if sumBid == self.pricingVolume:
-                    askP = sumAsk / self.pricingVolume
-                    bidP = sumBid / self.pricingVolume
-                    self.placeLimitOrder(self.symbol, )
-                    askVol = self.holdings['CASH'] / askP + max(0, self.holdings[self.symbol])
-                    bidVol = self.holdings['CASH'] / bidP + max(0, -self.holdings[self.symbol])
-                    self.placeLimitOrder(self.symbol, bidVol, True, bidP)
-                    self.paOrders += 1
-                    self.placeLimitOrder(self.symbol, askVol, False, askP)
-                    self.paOrders += 1
-                    self.state = 'AWAITING_CONFIRMATION' #place orders and await execution
-    
     def getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)
