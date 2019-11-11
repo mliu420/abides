@@ -97,7 +97,7 @@ class mliu420_blazeit(TradingAgent):
     
     def calculateAndOrder(self):
         bid, bid_vol, ask, ask_vol = self.getKnownBidAsk(self.symbol, best=True)
-        if bids and asks:
+        if bid and ask:
             sumBid = 0
             sumBidVol = 0
             sumAsk = 0
