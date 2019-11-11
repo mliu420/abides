@@ -137,8 +137,8 @@ class mliu420_blazeit(TradingAgent):
         return pd.Timedelta(self.wake_up_freq)
     def dump_shares(self):
     # get rid of any outstanding shares we have
-    if self.symbol in self.holdings and len(self.orders) == 0:
-        order_size = self.holdings[self.symbol]
-        bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
-        if bid:
-            self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
+        if self.symbol in self.holdings and len(self.orders) == 0:
+            order_size = self.holdings[self.symbol]
+            bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
+            if bid:
+                self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
