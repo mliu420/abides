@@ -1,13 +1,18 @@
 from agent.TradingAgent import TradingAgent
 import pandas as pd
-import numpy as np
-import os
-import pandas as pd
-from contributed_traders.util import get_file
+
 
 class mliu420_blazeit(TradingAgent):
     """
-    Mingchun Liu's Market Making Algo
+    This agent was built on the market maker agent with some caveats.
+    Prices are determined by a variable pricingVolume. Roughly the price
+    of a stock is going to be the average price if to buy/sell pricingVolume
+    amount of stock. This average between the buy and sell for 100 shares
+    is the price.
+    
+    My first iteration of this agent tried to be fancy with calculations
+    of price happening at different times to speed up the order placing process.
+    This caused issues with too many iterations.
     """
 
     def __init__(self, id, name, type, symbol, starting_cash, min_size, max_size , wake_up_freq='10s',
@@ -21,8 +26,7 @@ class mliu420_blazeit(TradingAgent):
         self.wake_up_freq = wake_up_freq # Frequency of agent wake up
         self.log_orders = log_orders
         self.state = "AWAITING_WAKEUP"
-        # Percentage of the order size to be placed at different levels is determined by levels_quote_dict
-        ######################
+        #My variables and parameters
         self.orders_executed = 0
         self.can_cancel_request = False
         self.paOrders = 0
@@ -37,69 +41,21 @@ class mliu420_blazeit(TradingAgent):
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
-        #check if current time greater than wait time
-        if self.cancelCheck(currentTime):
-            self.cancelOrders()
-        self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+        self.cancelOrders()
+        self.getCurrentSpread(self.symbol, depth=5)
         self.state = 'AWAITING_SPREAD'
-        self.orders_executed = 0
-    
+
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
-        try:
-            dt = (self.mkt_close - currentTime).totalSeconds()
-            if dt < 25:
-                self.dump_shares()
-                return 0
-        except:
-            pass
-
-        if msg.body['msg'] == 'ORDER_EXECUTED':
-            self.orders_executed += 1
-        if msg.body['msg'] == 'ORDER_ACCEPTED':
-            self.can_cancel_request = True
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
-            self.setWakeup(currentTime + self.getWakeFrequency())
-        #do nothing till other leg executed
-        elif self.state == 'AWAITING CONFIRMATION' and msg.body['msg'] == 'ORDER_ACCEPTED':
-            self.paOrders -= 1
-            if self.paOrders == 0:
-                self.state = 'AWAITING EXECUTION'
-                self.exec_time_order = currentTime
-        elif self.state == 'AWAITING_EXECUTION' and msg.body['msg'] == 'ORDER_EXECUTED':
-            #use a condition to see if holdings close to reduce exposure to JPM
-            #self.fOrderTime = currentTime
-            if len(self.orders) == 0:
-                self.setWakeup(currentTime + self.getWakeFrequency())
-                self.orders_executed = 0
-            elif self.cancelCheck:
-                self.cancelOrders()
-        elif msg.body['msg'] == 'ORDER_CANCELLED':
-            if len(self.orders) == 0:
-                self.orders_executed = 0
-                self.can_cancel_request = False
-                self.setWakeup(currentTime + self.getWakeFrequency())
-    
+            
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
         for _, order in self.orders.items():
             self.cancelOrder(order)
-        self.can_cancel_request = False
             
-    def cancelCheck(self, currentTime):
-        if self.orders and self.can_cancel_request:
-            if self.orders_executed == 0:
-                return True
-            else:
-                try:
-                    if int(currentTime - self.exec_time_order).totalSeconds() >= 5:
-                        return True
-                except:
-                    self.exec_time_order = currentTime
-        return False
-    
     def calculateAndOrder(self, currentTime):
         bid, ask = self.getKnownBidAsk(self.symbol, best=False)
         if bid and ask:
@@ -127,6 +83,10 @@ class mliu420_blazeit(TradingAgent):
                     if sumBid == self.pricingVolume:
                         askP = sumAsk / self.pricingVolume
                         bidP = sumBid / self.pricingVolume
+                        self.logEvent('PRICE ASK BEST', ask[i])
+                        self.logEvent('PRICE BID BEST', bid[i])
+                        self.logEvent('PRICE ASK', askP)
+                        self.logEvent('PRICE BID', askP)
                         self.placeLimitOrder(self.symbol, )
                         askVol = self.holdings['CASH'] / askP + max(0, self.holdings[self.symbol])
                         bidVol = self.holdings['CASH'] / bidP + max(0, -self.holdings[self.symbol])
@@ -139,10 +99,3 @@ class mliu420_blazeit(TradingAgent):
                 self.setWakeup(currentTime + self.getWakeFrequency())
     def getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)
-    def dump_shares(self):
-    # get rid of any outstanding shares we have
-        if self.symbol in self.holdings and len(self.orders) == 0:
-            order_size = self.holdings[self.symbol]
-            bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
-            if bid:
-                self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
