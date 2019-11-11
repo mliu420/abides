@@ -106,8 +106,8 @@ class mliu420_blazeit(TradingAgent):
                             distProp = 0.7
                         else:
                             distProp = 1
-                        askP = distProp * askP + (1-distProp) * midP
-                        bidP = (1-distProp) * bidP + distProp * midP
+                        askP = round(distProp * askP + (1-distProp) * midP)
+                        bidP = round((1-distProp) * bidP + distProp * midP)
                         
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
