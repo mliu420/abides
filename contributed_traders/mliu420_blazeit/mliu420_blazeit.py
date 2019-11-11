@@ -30,6 +30,7 @@ class mliu420_blazeit(TradingAgent):
         self.pricingVolume = 100
         self.depthLevels = 10
         self.starting_cash = starting_cash
+        self.pOrders = 0
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
@@ -38,7 +39,7 @@ class mliu420_blazeit(TradingAgent):
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
-        #self.cancelOrders()
+        self.cancelOrders()
         self.getCurrentSpread(self.symbol, depth=self.depthLevels)
         self.state = 'AWAITING_SPREAD'
         print('true holdings??')
@@ -53,6 +54,8 @@ class mliu420_blazeit(TradingAgent):
         super().receiveMessage(currentTime, msg)
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
+#         if msg.body['msg'] = 'ORDER_ACCEPTED':
+#             self.pOrders -= 1
         print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
@@ -103,8 +106,10 @@ class mliu420_blazeit(TradingAgent):
                             pass
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
+                            #self.pOrders += 1
                         if askVol > 0:
                             self.placeLimitOrder(self.symbol, askVol, False, askP)
+                            #self.pOrders += 1
                         print('placed order')
             except Exception as e:
                 print(e)
