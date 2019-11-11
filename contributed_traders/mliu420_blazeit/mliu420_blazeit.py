@@ -41,6 +41,8 @@ class mliu420_blazeit(TradingAgent):
         #self.cancelOrders()
         self.getCurrentSpread(self.symbol, depth=self.depthLevels)
         self.state = 'AWAITING_SPREAD'
+        print('true holdings??')
+        print(self.holdings)
 
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
