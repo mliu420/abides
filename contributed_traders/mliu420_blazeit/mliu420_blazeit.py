@@ -1,6 +1,9 @@
 from agent.TradingAgent import TradingAgent
 import pandas as pd
-
+import numpy as np
+import os
+import pandas as pd
+from contributed_traders.util import get_file
 
 class MarketMakerAgent(TradingAgent):
     """
@@ -19,11 +22,6 @@ class MarketMakerAgent(TradingAgent):
         self.log_orders = log_orders
         self.state = "AWAITING_WAKEUP"
         # Percentage of the order size to be placed at different levels is determined by levels_quote_dict
-        self.levels_quote_dict = {1: [1, 0, 0, 0, 0],
-                                  2: [.5, .5, 0, 0, 0],
-                                  3: [.34, .33, .33, 0, 0],
-                                  4: [.25, .25, .25, .25, 0],
-                                  5: [.20, .20, .20, .20, .20]}
         ######################
         self.orders_executed = 0
         self.can_cancel_request = False
