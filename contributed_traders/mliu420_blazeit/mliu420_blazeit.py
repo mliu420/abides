@@ -70,11 +70,13 @@ class mliu420_blazeit(TradingAgent):
             try:
                 for i in range(self.depthLevels):
                     if sumBidVol < 100:
+                        print('added to bid')
                         if sumBidVol + bid[i][1] > self.pricingVolume:
                             sumBidVol = self.pricingVolume
                             sumBid += (self.pricingVolume - bid[i][1]) * bid[i][0]
                         else:
                             sumBid += bid[i][1] * bid[i][0]
+                        print(sumBidVol)
                     if sumAskVol < 100:
                         if sumAskVol + ask[i][1] > self.pricingVolume:
                             sumAskVol = self.pricingVolume
@@ -99,6 +101,7 @@ class mliu420_blazeit(TradingAgent):
                         self.paOrders += 1
                         print('placed order')
             except:
+                print('exception')
                 pass
             self.state = 'AWAITING_WAKEUP' #place orders and await execution
             self.setWakeup(currentTime + self.getWakeFrequency())
