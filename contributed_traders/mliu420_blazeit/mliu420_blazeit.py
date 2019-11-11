@@ -84,8 +84,8 @@ class mliu420_blazeit(TradingAgent):
                             
                 if sumBidVol == sumAskVol:
                     if sumBidVol == self.pricingVolume:
-                        askP = sumAsk / self.pricingVolume
-                        bidP = sumBid / self.pricingVolume
+                        askP = round(sumAsk / self.pricingVolume)
+                        bidP = round(sumBid / self.pricingVolume)
 #                         bidVol = self.holdings['CASH'] / bidP
 #                         askVol = self.holdings['CASH'] / askP
 #                         try:
