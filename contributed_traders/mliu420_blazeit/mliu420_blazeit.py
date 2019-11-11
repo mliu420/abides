@@ -70,23 +70,20 @@ class mliu420_blazeit(TradingAgent):
             try:
                 for i in range(self.depthLevels):
                     if sumBidVol < 100:
-                        print('added to bid')
                         if sumBidVol + bid[i][1] > self.pricingVolume:
-                            sumBidVol = self.pricingVolume
                             sumBid += (self.pricingVolume - sumBidVol) * bid[i][0]
+                            sumBidVol = self.pricingVolume
                         else:
-                            sumBidVol += bid[i][1]
                             sumBid += bid[i][1] * bid[i][0]
-                            
-                        print(sumBidVol)
-                        print(sumBid)
+                            sumBidVol += bid[i][1]
                     if sumAskVol < 100:
                         if sumAskVol + ask[i][1] > self.pricingVolume:
-                            sumAskVol = self.pricingVolume
                             sumAsk += (self.pricingVolume - sumAskVol) * ask[i][0]
+                            sumAskVol = self.pricingVolume
                         else:
-                            sumAskVol += ask[i][1]
                             sumAsk += ask[i][1] * ask[i][0]
+                            sumAskVol += ask[i][1]
+                            
                             
                 if sumBidVol == sumAskVol:
                     if sumBidVol == self.pricingVolume:
