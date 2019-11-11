@@ -90,7 +90,7 @@ class mliu420_blazeit(TradingAgent):
                         try:
                             print('bidvol, askvol, jpm',bidVol, askVol, self.holdings[self.symbol])
                             bidVol += max(0, -self.holdings[self.symbol])
-                            askVol += max(0, -self.holdings[self.symbol])
+                            askVol -= max(0, -self.holdings[self.symbol])
                             print('bidvol, askvol, jpm',bidVol, askVol, self.holdings[self.symbol])
                         except:
                             pass
