@@ -101,18 +101,22 @@ class mliu420_blazeit(TradingAgent):
             sumBidVol = 0
             sumAsk = 0
             sumAskVol = 0
+            try:
             for i in range(self.depthLevels):
-                if sumBidVol + bid[i][1] > self.pricingVolume:
-                    sumBidVol = self.pricingVolume
-                    sumBid += (self.pricingVolume - bid[i][1]) * bid[i][0]
-                else:
-                    sumBid += bid[i][1] * bid[i][0]
-                    
-                if sumAskVol + ask[i][1] > self.pricingVolume:
-                    sumAskVol = self.pricingVolume
-                    sumAsk += (self.pricingVolume - ask[i][1]) * ask[i][0]
-                else:
-                    sumAsk += ask[i][1] * ask[i][0]
+                if sumBidVol < 100:
+                    if sumBidVol + bid[i][1] > self.pricingVolume:
+                        sumBidVol = self.pricingVolume
+                        sumBid += (self.pricingVolume - bid[i][1]) * bid[i][0]
+                    else:
+                        sumBid += bid[i][1] * bid[i][0]
+                if sumAskVol < 100
+                    if sumAskVol + ask[i][1] > self.pricingVolume:
+                        sumAskVol = self.pricingVolume
+                        sumAsk += (self.pricingVolume - ask[i][1]) * ask[i][0]
+                    else:
+                        sumAsk += ask[i][1] * ask[i][0]
+            except:
+                self.setWakeup(currentTime + self.getWakeFrequency())
                 
             if sumBid == sumAsk:
                 if sumBid == self.pricingVolume:
