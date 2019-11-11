@@ -104,6 +104,8 @@ class mliu420_blazeit(TradingAgent):
                             print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
                         except:
                             pass
+                        askP = (askP * askVol + (0.5 * bidP + 0.5 * askP) * bidVol) / (bidVol + askVol)
+                        bidP = (bidP * bidVol + (0.5 * bidP + 0.5 * askP) * askVol) / (bidVol + askVol)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
                             #self.pOrders += 1
