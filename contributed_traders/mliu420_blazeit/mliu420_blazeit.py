@@ -54,7 +54,6 @@ class mliu420_blazeit(TradingAgent):
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder()
             self.setWakeup(currentTime + self.getWakeFrequency())
-            self.getCurrentSpread(self.symbol, depth=self.depthLevels)
         #do nothing till other leg executed
         elif self.state == 'AWAITING CONFIRMATION' and msg.body['msg'] == 'ORDER_ACCEPTED':
             self.paOrders -= 1
