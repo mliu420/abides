@@ -59,6 +59,7 @@ class mliu420_blazeit(TradingAgent):
             self.wait -= 1
 
     def receiveMessage(self, currentTime, msg):
+        print(self.wait)
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
         
