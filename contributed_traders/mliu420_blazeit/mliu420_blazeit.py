@@ -97,11 +97,13 @@ class mliu420_blazeit(TradingAgent):
                             #print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
                         except:
                             pass
+                        askM = askP
+                        bidM = bidP
                         midP = (askP + bidP) / 2
-                        askP = max(midP + 5, askP)
-                        askP = min(midP + 50, askP)
-                        bidP = min(midP - 5, bidP)
-                        bidP = max(midP - 50, bidP)
+                        askP = max(askM - 1, askP)
+                        askP = min(midP + 10, askP)
+                        bidP = min(bidM + 1, bidP)
+                        bidP = max(midP - 10, bidP)
                         dist = askVol / (askVol + bidVol)
                         if dist > 0.65:
                             askP = round(0.9 * askP + (0.1) * midP)
