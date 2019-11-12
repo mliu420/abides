@@ -55,8 +55,9 @@ class mliu420_blazeit(TradingAgent):
                 self.stdS = self.stdSpread.std()[0]
             except:
                 self.stdS = 50
-            self.getCurrentSpread(self.symbol, depth=self.depthLevels)
             self.state = 'AWAITING_SPREAD'
+            self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+            
         else:
             self.wait -= 1
             self.state = 'AWAITING_WAKEUP'
@@ -73,6 +74,8 @@ class mliu420_blazeit(TradingAgent):
                     self.dump_shares()
             except:
                 pass
+            self.state = 'AWAITING_WAKEUP' #place orders and await execution
+            self.setWakeup(currentTime + self.getWakeFrequency())
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
@@ -80,6 +83,8 @@ class mliu420_blazeit(TradingAgent):
                 self.close = True
                 print('DUMP SHARES')
                 self.dump_shares()
+            self.state = 'AWAITING_WAKEUP' #place orders and await execution
+            self.setWakeup(currentTime + self.getWakeFrequency())
         elif self.state == 'AWAITING_WAKEUP' and msg.body['msg'] == 'ORDER_EXECUTED':
             if len(self.orders) > 0 and self.wait == 0:
                 self.wait = 1
@@ -88,8 +93,7 @@ class mliu420_blazeit(TradingAgent):
         elif msg.body['msg'] == 'ORDER_ACCEPTED':
             self.pOrders -= 1
         #print(msg)
-        self.state = 'AWAITING_WAKEUP' #place orders and await execution
-        self.setWakeup(currentTime + self.getWakeFrequency())
+
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
         for _, order in self.orders.items():
