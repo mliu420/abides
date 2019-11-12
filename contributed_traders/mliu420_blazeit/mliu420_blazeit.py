@@ -57,7 +57,8 @@ class mliu420_blazeit(TradingAgent):
             self.state = 'AWAITING_SPREAD'
         else:
             self.wait -= 1
-
+            self.setWakeup(currentTime + self.getWakeFrequency())
+            
     def receiveMessage(self, currentTime, msg):
         print(self.wait)
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
