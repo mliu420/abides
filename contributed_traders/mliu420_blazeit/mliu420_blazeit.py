@@ -31,6 +31,7 @@ class mliu420_blazeit(TradingAgent):
         self.depthLevels = 10
         self.starting_cash = starting_cash
         self.pOrders = 0
+        self.stdSpread = pd.DataFrame([50])
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
@@ -41,6 +42,10 @@ class mliu420_blazeit(TradingAgent):
         if not can_trade: return
         if 1==1:#self.pOrders == 0:
             self.cancelOrders()
+            try:
+                self.stdS = self.stdSpread
+            except:
+                self.stdS = 50
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
             self.state = 'AWAITING_SPREAD'
             print('true holdings??')
@@ -102,14 +107,9 @@ class mliu420_blazeit(TradingAgent):
                         askM = askP
                         bidM = bidP
                         midP = (askM + bidM) / 2
-                        askP = min(askM - 15, askP)
-                        askP = max(midP + 80, askP)
-                        bidP = max(bidM + 15, bidP)
-                        bidP = min(midP - 80, bidP)
-                        dist = askVol / (askVol + bidVol)
-                        print(dist)
-                        askP = round(askP - 30 * dist)
-                        bidP = round(bidP + 30 * (1-dist))
+                        self.stdSpread = self.stdSpread.append(askM-bidM)
+                        askP = midP + self.stdS
+                        bidP = midP - self.stdS
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
