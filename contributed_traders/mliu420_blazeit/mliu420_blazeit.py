@@ -68,13 +68,11 @@ class mliu420_blazeit(TradingAgent):
         if self.close:
             try:
                 if self.holdings[self.symbol] != 0:
+                    print('dumping shares')
                     self.cancelOrders()
                     self.dump_shares()
-                    self.state = 'AWAITING_WAKEUP' #place orders and await execution
-                    self.setWakeup(currentTime + self.getWakeFrequency())
             except:
-                self.state = 'AWAITING_WAKEUP' #place orders and await execution
-                self.setWakeup(currentTime + self.getWakeFrequency())
+                pass
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
@@ -90,6 +88,8 @@ class mliu420_blazeit(TradingAgent):
         elif msg.body['msg'] == 'ORDER_ACCEPTED':
             self.pOrders -= 1
         #print(msg)
+        self.state = 'AWAITING_WAKEUP' #place orders and await execution
+        self.setWakeup(currentTime + self.getWakeFrequency())
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
         for _, order in self.orders.items():
@@ -146,8 +146,6 @@ class mliu420_blazeit(TradingAgent):
             except Exception as e:
                 print(e)
                 pass
-        self.state = 'AWAITING_WAKEUP' #place orders and await execution
-        self.setWakeup(currentTime + self.getWakeFrequency())
             
     def dump_shares(self):
         # get rid of any outstanding shares we have
