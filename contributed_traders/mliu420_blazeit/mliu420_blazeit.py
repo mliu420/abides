@@ -29,6 +29,7 @@ class mliu420_blazeit(TradingAgent):
         self.log_orders = log_orders
         self.state = "AWAITING_WAKEUP"
         #parameters
+        self.sc = starting_cash
         self.pricingVolume = 100
         self.depthLevels = 10
         self.starting_cash = starting_cash
@@ -36,7 +37,6 @@ class mliu420_blazeit(TradingAgent):
         self.stdSpread = pd.DataFrame([50, 51])
         self.close = False
         self.wait = 0
-        self.runs = 1
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
@@ -48,9 +48,6 @@ class mliu420_blazeit(TradingAgent):
         print('true holdings??')
         print(self.holdings)
         print(self.markToMarket(self.holdings))
-        if self.runs > 0:
-            self.setWakeup(currentTime + self.getWakeFrequency()/2)
-            self.runs -= 1
         if self.wait == 0 and self.pOrders == 0:
             self.cancelOrders()
             try:
@@ -118,12 +115,12 @@ class mliu420_blazeit(TradingAgent):
                         askM = sumAsk / self.pricingVolume
                         bidM = sumBid / self.pricingVolume
                         print('Spread:',askM,bidM, askM - bidM)
-                        bidVol = math.floor(max(0, 4000000 / askM / 4))
-                        askVol = math.floor(max(0, 4000000 / bidM / 4))
+                        bidVol = math.floor(max(0, self.holdings['CASH'] / askM)
+                        askVol = math.floor(max(0,(self.holdings['CASH'] - abs(min(0,self.holdings[self.symbol]*askM)) / askM / 4)
                         try:
                             #print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
-                            bidVol = max(bidVol,bidVol - self.holdings[self.symbol])
-                            askVol = max(askVol,askVol + self.holdings[self.symbol])
+                            bidVol = max(0,bidVol - self.holdings[self.symbol])
+                            askVol = max(0,askVol + self.holdings[self.symbol])
                             #print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
                         except:
                             pass
