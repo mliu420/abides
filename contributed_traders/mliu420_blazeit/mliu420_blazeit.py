@@ -141,15 +141,15 @@ class mliu420_blazeit(TradingAgent):
                         bidM = sumBid / self.pricingVolume
                         midM = (askM + bidM) / 2
                         print('Spread:',askM,bidM, askM - bidM)
-                        bidVol = np.floor(max(0, self.holdings['CASH'] / midM))
+                        bidVol = int(np.floor(max(0, self.holdings['CASH'] / midM)))
                         try:
-                            askVol = np.floor(max(0,2 * max(0,self.holdings[self.symbol])+(self.holdings['CASH'] - 2*abs(min(0,self.holdings[self.symbol]*askM))) / midM  ))
+                            askVol = int(np.floor(max(0,2 * max(0,self.holdings[self.symbol])+(self.holdings['CASH'] - 2*abs(min(0,self.holdings[self.symbol]*askM))) / midM  )))
                         except:
-                            askVol = np.floor(max(0,self.holdings['CASH']  / midM  ) )
+                            askVol = int(np.floor(max(0,self.holdings['CASH']  / midM  ) ))
                         print('Volumes ask and bid:',askVol,bidVol)
                         midP = midM + self.stdS / 7 * bidVol / (bidVol + askVol) - self.stdS / 14
-                        bidP = np.floor( min(midP - self.stdS/1.5, bidM + 1) )
-                        askP = np.ceil( max(midP + self.stdS/1.5, askM - 1) )
+                        bidP = int(np.floor( min(midP - self.stdS/1.5, bidM + 1) ))
+                        askP = int(np.ceil( max(midP + self.stdS/1.5, askM - 1) ))
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
