@@ -66,9 +66,15 @@ class mliu420_blazeit(TradingAgent):
         super().receiveMessage(currentTime, msg)
         
         if self.close:
-            self.cancelOrders()
-            print('DUMPING')
-            self.dump_shares()
+            try:
+                if self.holdings[self.symbol] != 0:
+                    self.cancelOrders()
+                    self.dump_shares()
+                    self.state = 'AWAITING_WAKEUP' #place orders and await execution
+                    self.setWakeup(currentTime + self.getWakeFrequency())
+            except:
+                self.state = 'AWAITING_WAKEUP' #place orders and await execution
+                self.setWakeup(currentTime + self.getWakeFrequency())
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
