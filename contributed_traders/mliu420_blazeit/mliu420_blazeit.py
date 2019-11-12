@@ -51,7 +51,7 @@ class mliu420_blazeit(TradingAgent):
         if self.runs > 0:
             self.setWakeup(currentTime + self.getWakeFrequency()/2)
             self.runs -= 1
-        if self.wait == 0 and self.pOrders > 0:
+        if self.wait == 0 and self.pOrders == 0:
             self.cancelOrders()
             try:
                 self.stdS = self.stdSpread.std()[0]
