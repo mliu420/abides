@@ -109,8 +109,8 @@ class mliu420_blazeit(TradingAgent):
                             askP = round(1.1 * askP + (-0.1) * midP)
                             bidP = round(0.9 * bidP + (0.1) * midP)
                         else:
-                            askP = round(askP)
-                            bidP = round(bidP)
+                            askP = round(askP) - 1
+                            bidP = round(bidP) + 1
                         
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
