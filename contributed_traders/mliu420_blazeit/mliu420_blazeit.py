@@ -57,6 +57,8 @@ class mliu420_blazeit(TradingAgent):
                 self.stdS = 50
             if not(self.close):
                 self.state = 'AWAITING_SPREAD'
+            else:
+                self.dump_shares()
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
         else:
             self.wait -= 1
