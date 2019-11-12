@@ -60,7 +60,6 @@ class mliu420_blazeit(TradingAgent):
             self.setWakeup(currentTime + self.getWakeFrequency())
             
     def receiveMessage(self, currentTime, msg):
-        print(self.wait)
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
         
@@ -74,7 +73,7 @@ class mliu420_blazeit(TradingAgent):
                 self.dump_shares()
         elif self.state == 'AWAITING_WAKEUP' and msg.body['msg'] == 'ORDER_EXECUTED':
             if len(self.orders) > 0:
-                self.wait = 5
+                self.wait = 30
             else:
                 self.wait = 0
         #print(msg)
