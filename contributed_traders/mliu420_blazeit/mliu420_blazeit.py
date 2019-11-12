@@ -27,7 +27,11 @@ class mliu420_blazeit(TradingAgent):
         self.log_orders = log_orders
         self.state = "AWAITING_WAKEUP"
         #parameters
-        self.pricingVolume = 100
+        self.buy = True
+        self.fake = True
+        self.fakePrice = 0
+        ####
+        self.pricingVolume = 30
         self.depthLevels = 10
         self.starting_cash = starting_cash
         self.pOrders = 0
@@ -40,7 +44,7 @@ class mliu420_blazeit(TradingAgent):
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
-        if 1==1:#self.pOrders == 0:
+        if self.pOrders == 0:
             self.cancelOrders()
             try:
                 self.stdS = self.stdSpread.std()[0]
@@ -107,17 +111,27 @@ class mliu420_blazeit(TradingAgent):
                         askM = askP
                         bidM = bidP
                         midP = (askM + bidM) / 2
-                        midP += self.stdS / 5 * bidVol / (bidVol + askVol) - self.stdS / 10
                         self.stdSpread = self.stdSpread.append([askM-bidM], ignore_index=True)
-                        bidP = math.floor(( (midP - self.stdS/2) * 2 + bidM) / 3)
-                        askP = math.ceil(( (midP + self.stdS/2) * 2 + askM) / 3)
-                        print('Algo Spread:',askP,bidP, askP - bidP)
-                        if bidVol > 0:
-                            self.placeLimitOrder(self.symbol, bidVol, True, bidP)
-                            self.pOrders += 1
-                        if askVol > 0:
-                            self.placeLimitOrder(self.symbol, askVol, False, askP)
-                            self.pOrders += 1
+                        if self.buy:
+                            if self.fake:
+                                if askM - bidM > self.stdS:
+                                    if bid[0][0] < midP:
+                                        self.fakePrice = ask[0][0]-1
+                                        self.placeLimitOrder(self.symbol, 1, True, self.fakePrice)
+                                        self.fake = False
+                            else:
+                                self.placeLimitOrder(self.symbol, bidVol - 1, False, self.fakePrice)
+                                self.fake = True
+                        else:
+                            if self.fake:
+                                if askM - bidM > self.stdS:
+                                    if ask[0][0] > midP:
+                                        self.fakePrice = bid[0][0]+1
+                                        self.placeLimitOrder(self.symbol, 1, False, self.fakePrice)
+                                        self.fake = False
+                            else:
+                                self.placeLimitOrder(self.symbol, askVol - 1, True, self.fakePrice)
+                                self.fake = True
             except Exception as e:
                 print(e)
                 pass
