@@ -35,6 +35,7 @@ class mliu420_blazeit(TradingAgent):
         self.pOrders = 0
         self.stdSpread = pd.DataFrame([50, 51])
         self.close = False
+        self.wait = 0
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
@@ -46,13 +47,14 @@ class mliu420_blazeit(TradingAgent):
         print('true holdings??')
         print(self.holdings)
         print(self.markToMarket(self.holdings))
-        self.cancelOrders()
-        try:
-            self.stdS = self.stdSpread.std()[0]
-        except:
-            self.stdS = 50
-        self.getCurrentSpread(self.symbol, depth=self.depthLevels)
-        self.state = 'AWAITING_SPREAD'
+        if self.wait == 0:
+            self.cancelOrders()
+            try:
+                self.stdS = self.stdSpread.std()[0]
+            except:
+                self.stdS = 50
+            self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+            self.state = 'AWAITING_SPREAD'
 
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
@@ -66,6 +68,10 @@ class mliu420_blazeit(TradingAgent):
             if dt < 15:
                 self.close = True
                 self.dump_shares()
+        elif self.state == 'AWAITING_WAKEUP' and msg.body['msg'] == 'ORDER_EXECUTED':
+            if len(self.orders) > 0 and self.wait = 0:
+                self.wait = 5
+            else self.wait = 0
         #print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
@@ -113,8 +119,8 @@ class mliu420_blazeit(TradingAgent):
                             pass
                         midM = (askM + bidM) / 2
                         midP = midM + self.stdS / 5 * bidVol / (bidVol + askVol) - self.stdS / 10
-                        bidP = math.floor(( (midP - self.stdS) * 5 + bidM) / 6)
-                        askP = math.ceil(( (midP + self.stdS) * 5 + askM) / 6)
+                        bidP = math.floor(( (midP - self.stdS/1.5) * 5 + bidM) / 6)
+                        askP = math.ceil(( (midP + self.stdS/1.5) * 5 + askM) / 6)
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
