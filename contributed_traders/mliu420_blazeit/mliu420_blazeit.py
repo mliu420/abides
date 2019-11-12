@@ -96,6 +96,7 @@ class mliu420_blazeit(TradingAgent):
     def calculateAndOrder(self, currentTime):
         print('place7')
         bid, ask = self.getKnownBidAsk(self.symbol, best=False)
+        print('place8')
         if bid and ask:
             sumBid = 0
             sumBidVol = 0
@@ -117,8 +118,10 @@ class mliu420_blazeit(TradingAgent):
                         else:
                             sumAsk += ask[i][1] * ask[i][0]
                             sumAskVol += ask[i][1]
+                    if sumAskVol == 100 and sumBidVol == 100:
+                        break
                             
-                            
+                print('place9')  
                 if sumBidVol == sumAskVol:
                     if sumBidVol == self.pricingVolume:
                         askM = sumAsk / self.pricingVolume
