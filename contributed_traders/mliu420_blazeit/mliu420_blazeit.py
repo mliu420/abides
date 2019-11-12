@@ -31,7 +31,7 @@ class mliu420_blazeit(TradingAgent):
         self.depthLevels = 10
         self.starting_cash = starting_cash
         self.pOrders = 0
-        self.stdSpread = pd.DataFrame([50])
+        self.stdSpread = pd.DataFrame([50, 51])
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
