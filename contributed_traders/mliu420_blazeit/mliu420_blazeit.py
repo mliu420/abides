@@ -61,6 +61,8 @@ class mliu420_blazeit(TradingAgent):
             self.dump_shares()
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
+        elif msg.body['msg'] == "WHEN_MKT_CLOSE":
+              self.mkt_close = msg.body['data']
         dt = (self.mkt_close - currentTime).totalSeconds()
         if dt < 15:
             self.close()
