@@ -123,9 +123,10 @@ class mliu420_blazeit(TradingAgent):
                             askVol = math.floor(max(0,self.holdings['CASH']  / midM  ) )
                         try:
                             #print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
-                            bidVol = max(0,bidVol - self.holdings[self.symbol])
-                            askVol = max(0,askVol + self.holdings[self.symbol])
+                            #bidVol = max(0,bidVol - self.holdings[self.symbol])
+                            #askVol = max(0,askVol + self.holdings[self.symbol])
                             #print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
+                            pass
                         except:
                             pass
                         print('Volumes ask and bid:',askVol,bidVol)
