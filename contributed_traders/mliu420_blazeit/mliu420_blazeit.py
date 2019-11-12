@@ -55,9 +55,9 @@ class mliu420_blazeit(TradingAgent):
                 self.stdS = self.stdSpread.std()[0]
             except:
                 self.stdS = 50
-            self.state = 'AWAITING_SPREAD'
+            if not(self.close):
+                self.state = 'AWAITING_SPREAD'
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
-            
         else:
             self.wait -= 1
             self.state = 'AWAITING_WAKEUP'
@@ -72,10 +72,9 @@ class mliu420_blazeit(TradingAgent):
                     print('dumping shares')
                     self.cancelOrders()
                     self.dump_shares()
+                    self.state = 'AWAITING_WAKEUP'
             except:
                 pass
-            self.state = 'AWAITING_WAKEUP' #place orders and await execution
-            self.setWakeup(currentTime + self.getWakeFrequency())
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
