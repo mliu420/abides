@@ -1,6 +1,6 @@
 #!/bin/bash
 
-seed=11
+seed=12
 config=rmsc01
 log=rmsc01
 

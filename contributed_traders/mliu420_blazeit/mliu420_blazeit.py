@@ -49,13 +49,9 @@ class mliu420_blazeit(TradingAgent):
         super().kernelStarting(startTime)
 
     def wakeup(self, currentTime):
-        print(currentTime)
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
-        print('true holdings??')
-        print(self.holdings)
-        print(self.markToMarket(self.holdings))
         if self.wait <= 0 and self.pOrders == 0:
             self.cancelOrders()
             try:
@@ -81,7 +77,6 @@ class mliu420_blazeit(TradingAgent):
             if msg.body['msg'] == 'ORDER_EXECUTED':
                 try:
                     if self.holdings[self.symbol] != 0:
-                        print('dumping shares')
                         self.cancelOrders()
                         self.dump_shares()
                         self.state = 'AWAITING_WAKEUP'
@@ -92,7 +87,6 @@ class mliu420_blazeit(TradingAgent):
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
             if dt < 5:
                 self.close = True
-                print('DUMP SHARES')
                 self.dump_shares()
             self.state = 'AWAITING_WAKEUP' #place orders and await execution
             self.setWakeup(currentTime + self.getWakeFrequency())
@@ -103,7 +97,6 @@ class mliu420_blazeit(TradingAgent):
                 self.wait = 0
         elif msg.body['msg'] == 'ORDER_ACCEPTED':
             self.pOrders -= 1
-        #print(msg)
 
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
@@ -140,26 +133,24 @@ class mliu420_blazeit(TradingAgent):
                         askM = sumAsk / self.pricingVolume
                         bidM = sumBid / self.pricingVolume
                         midM = (askM + bidM) / 2
-                        print('Spread:',askM,bidM, askM - bidM)
                         bidVol = int(np.floor(max(0, self.holdings['CASH'] / midM)))
                         try:
                             askVol = int(np.floor(max(0,2 * max(0,self.holdings[self.symbol])+(self.holdings['CASH'] - 2*abs(min(0,self.holdings[self.symbol]*askM))) / midM  )))
                         except:
                             askVol = int(np.floor(max(0,self.holdings['CASH']  / midM  ) ))
-                        print('Volumes ask and bid:',askVol,bidVol)
+                        #Hate inventory exposure like I do? I change prices to move shares close to zero
                         midP = midM + self.stdS / 7 * bidVol / (bidVol + askVol) - self.stdS / 14
                         bidP = int(np.floor( min(midP - self.stdS/1.5, bidM + 1) ))
                         askP = int(np.ceil( max(midP + self.stdS/1.5, askM - 1) ))
-                        print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
+                            #orders sent and accepted are tracked so agent doesn't overleverage
                             self.pOrders += 1
                         if askVol > 0:
                             self.placeLimitOrder(self.symbol, askVol, False, askP)
                             self.pOrders += 1
                         self.stdSpread = self.stdSpread.append([askM-bidM], ignore_index=True)
             except Exception as e:
-                print(e)
                 pass
             
     def dump_shares(self):
@@ -167,8 +158,6 @@ class mliu420_blazeit(TradingAgent):
         if self.symbol in self.holdings:
             bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
             order_size = self.holdings[self.symbol]
-            print('order size',order_size)
-            print('ask',ask)
             if order_size > 0:
                 if bid:
                     self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
