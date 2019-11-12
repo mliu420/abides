@@ -71,7 +71,7 @@ class mliu420_blazeit(TradingAgent):
                 self.close = True
                 self.dump_shares()
         elif self.state == 'AWAITING_WAKEUP' and msg.body['msg'] == 'ORDER_EXECUTED':
-            if len(self.orders) > 0 and self.wait == 0:
+            if len(self.orders) > 0:
                 self.wait = 5
             else:
                 self.wait = 0
