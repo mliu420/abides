@@ -167,7 +167,7 @@ class mliu420_blazeit(TradingAgent):
                     self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
             if order_size < 0:
                 if ask:
-                    self.placeLimitOrder(self.symbol, quantity=abs(order_size), is_buy_order=True, limit_price=round(2 * ask[0][0]))
+                    self.placeLimitOrder(self.symbol, quantity=abs(order_size), is_buy_order=True, limit_price=round(2 * ask))
     
     def getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)
