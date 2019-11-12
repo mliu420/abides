@@ -1,6 +1,7 @@
 from agent.TradingAgent import TradingAgent
 import pandas as pd
-import math
+import numpy as np
+import os
 
 class mliu420_blazeit(TradingAgent):
     """
