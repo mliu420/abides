@@ -106,15 +106,15 @@ class mliu420_blazeit(TradingAgent):
                         bidP = max(bidM + 1, bidP)
                         bidP = min(midP - 10, bidP)
                         dist = askVol / (askVol + bidVol)
-                        if dist > 0.65:
-                            askP = round(0.9 * askP + (0.1) * midP)
-                            bidP = round(1.1 * bidP + (-0.1) * midP)
-                        elif dist < 0.35:
-                            askP = round(1.1 * askP + (-0.1) * midP)
-                            bidP = round(0.9 * bidP + (0.1) * midP)
-                        else:
-                            askP = round(askP)
-                            bidP = round(bidP)
+#                         if dist > 0.65:
+#                             askP = round(0.9 * askP + (0.1) * midP)
+#                             bidP = round(1.1 * bidP + (-0.1) * midP)
+#                         elif dist < 0.35:
+#                             askP = round(1.1 * askP + (-0.1) * midP)
+#                             bidP = round(0.9 * bidP + (0.1) * midP)
+#                         else:
+#                             askP = round(askP)
+#                             bidP = round(bidP)
                         
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
