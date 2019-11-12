@@ -70,7 +70,7 @@ class mliu420_blazeit(TradingAgent):
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
-            if dt < 15:
+            if dt < 5:
                 self.close = True
                 self.dump_shares()
         elif self.state == 'AWAITING_WAKEUP' and msg.body['msg'] == 'ORDER_EXECUTED':
@@ -126,8 +126,8 @@ class mliu420_blazeit(TradingAgent):
                             askVol = math.floor(max(0,self.holdings['CASH']  / midM  ) )
                         print('Volumes ask and bid:',askVol,bidVol)
                         midP = midM + self.stdS / 7 * bidVol / (bidVol + askVol) - self.stdS / 14
-                        bidP = math.floor( min(midP - self.stdS/1.5, bidM) )
-                        askP = math.ceil( max(midP + self.stdS/1.5, askM) )
+                        bidP = math.floor( min(midP - self.stdS/1.5, bidM + 1) )
+                        askP = math.ceil( max(midP + self.stdS/1.5, askM - 1) )
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
