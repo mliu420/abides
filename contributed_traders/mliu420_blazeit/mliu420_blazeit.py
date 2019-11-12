@@ -36,6 +36,7 @@ class mliu420_blazeit(TradingAgent):
         self.stdSpread = pd.DataFrame([50, 51])
         self.close = False
         self.wait = 0
+        self.runs = 1
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
@@ -47,7 +48,9 @@ class mliu420_blazeit(TradingAgent):
         print('true holdings??')
         print(self.holdings)
         print(self.markToMarket(self.holdings))
-        self.setWakeup(currentTime + self.getWakeFrequency()/2)
+        if self.runs > 0:
+            self.setWakeup(currentTime + self.getWakeFrequency()/2)
+            self.runs -= 1
         if self.wait == 0:
             self.cancelOrders()
             try:
