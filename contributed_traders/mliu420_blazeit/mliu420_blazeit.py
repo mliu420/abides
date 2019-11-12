@@ -157,8 +157,8 @@ class mliu420_blazeit(TradingAgent):
             except Exception as e:
                 print(e)
                 pass
-            self.state = 'AWAITING_WAKEUP' #place orders and await execution
-            self.setWakeup(currentTime + self.getWakeFrequency())
+        self.state = 'AWAITING_WAKEUP' #place orders and await execution
+        self.setWakeup(currentTime + self.getWakeFrequency())
             
     def dump_shares(self):
         # get rid of any outstanding shares we have
