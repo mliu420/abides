@@ -154,7 +154,7 @@ class mliu420_blazeit(TradingAgent):
     def dump_shares(self):
         # get rid of any outstanding shares we have
         if self.symbol in self.holdings:
-            bid, _, ask, _ = self.getKnownBidAsk(self.symbol, best=False)
+            bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
             order_size = self.holdings[self.symbol]
             print('order size',order_size)
             print('ask',ask)
@@ -163,7 +163,7 @@ class mliu420_blazeit(TradingAgent):
                     self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
             if order_size < 0:
                 if ask:
-                    self.placeLimitOrder(self.symbol, quantity=abs(order_size), is_buy_order=True, limit_price=2 * ask[1][0])
+                    self.placeLimitOrder(self.symbol, quantity=abs(order_size), is_buy_order=True, limit_price=round(2 * ask[1][0]))
     
     def getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)
