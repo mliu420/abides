@@ -72,8 +72,8 @@ class mliu420_blazeit(TradingAgent):
                 self.close = True
                 self.dump_shares()
         elif self.state == 'AWAITING_WAKEUP' and msg.body['msg'] == 'ORDER_EXECUTED':
-            if len(self.orders) > 0:
-                self.wait = 300
+            if len(self.orders) > 0 and self.wait == 0:
+                self.wait = 60
             else:
                 self.wait = 0
         #print(msg)
@@ -112,12 +112,12 @@ class mliu420_blazeit(TradingAgent):
                         askM = sumAsk / self.pricingVolume
                         bidM = sumBid / self.pricingVolume
                         print('Spread:',askM,bidM, askM - bidM)
-                        bidVol = math.floor(max(0, self.holdings['CASH']) / askM/2)
-                        askVol = math.floor(max(0, self.holdings['CASH']) / bidM/2)
+                        bidVol = math.floor(max(0, self.holdings['CASH']) / askM)
+                        askVol = math.floor(max(0, self.holdings['CASH']) / bidM)
                         try:
                             #print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
-                            bidVol = max(0,bidVol - self.holdings[self.symbol])
-                            askVol = max(0,askVol + self.holdings[self.symbol])
+                            bidVol = max(0,bidVol - self.holdings[self.symbol])/2
+                            askVol = max(0,askVol + self.holdings[self.symbol])/2
                             #print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
                         except:
                             pass
