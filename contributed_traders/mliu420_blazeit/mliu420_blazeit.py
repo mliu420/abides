@@ -55,6 +55,8 @@ class mliu420_blazeit(TradingAgent):
                 self.stdS = 50
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
             self.state = 'AWAITING_SPREAD'
+        else:
+            self.wait -= 1
 
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
