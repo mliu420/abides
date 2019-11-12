@@ -66,11 +66,13 @@ class mliu420_blazeit(TradingAgent):
         super().receiveMessage(currentTime, msg)
         
         if self.close:
+            self.cancelOrders()
+            print('DUMPING')
             self.dump_shares()
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
-            if dt < 15:
+            if dt < 5:
                 self.close = True
                 print('DUMP SHARES')
                 self.dump_shares()
@@ -143,7 +145,7 @@ class mliu420_blazeit(TradingAgent):
             
     def dump_shares(self):
         # get rid of any outstanding shares we have
-        if self.symbol in self.holdings and len(self.orders) == 0:
+        if self.symbol in self.holdings
             bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
             order_size = self.holdings[self.symbol]
             if order_size > 0:
