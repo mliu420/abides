@@ -128,7 +128,7 @@ class mliu420_blazeit(TradingAgent):
                             #print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
                         except:
                             pass
-                        
+                        print('Volumes ask and bid:',askVol,bidVol)
                         midP = midM + self.stdS / 7 * bidVol / (bidVol + askVol) - self.stdS / 14
                         bidP = math.floor( max(midP - self.stdS/1.5, bidM) )
                         askP = math.ceil( min(midP + self.stdS/1.5, askM) )
