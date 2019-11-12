@@ -66,7 +66,7 @@ class mliu420_blazeit(TradingAgent):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
         
-        if self.close
+        if self.close:
             if msg.body['msg'] == 'ORDER_EXECUTED':
                 try:
                     if self.holdings[self.symbol] != 0:
