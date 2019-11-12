@@ -116,11 +116,14 @@ class mliu420_blazeit(TradingAgent):
                         print(self.fake,self.buy)
                         if self.buy:
                             if self.fake:
+                                print('wtf')
                                 if askM - bidM > 30:
+                                    print('not here')
                                     if bid[0][0] < midP:
                                         self.fakePrice = ask[0][0]-1
                                         self.placeLimitOrder(self.symbol, 1, True, self.fakePrice)
                                         self.fake = False
+                                        print('here!')
                             else:
                                 self.placeLimitOrder(self.symbol, bidVol - 1, False, self.fakePrice)
                                 self.fake = True
