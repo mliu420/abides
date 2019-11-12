@@ -110,6 +110,8 @@ class mliu420_blazeit(TradingAgent):
                         self.stdSpread = self.stdSpread.append(askM-bidM)
                         askP = midP + self.stdS
                         bidP = midP - self.stdS
+                        print(askP)
+                        print(bidP)
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
