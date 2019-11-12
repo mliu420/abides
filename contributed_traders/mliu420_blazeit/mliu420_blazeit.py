@@ -115,7 +115,8 @@ class mliu420_blazeit(TradingAgent):
 #                         else:
 #                             askP = round(askP)
 #                             bidP = round(bidP)
-                        
+                        askP = round(askP)
+                        bidP = round(bidP)
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
