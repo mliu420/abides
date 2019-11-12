@@ -49,7 +49,7 @@ class mliu420_blazeit(TradingAgent):
         print('true holdings??')
         print(self.holdings)
         print(self.markToMarket(self.holdings))
-        if self.wait == 0 and self.pOrders == 0:
+        if self.wait <= 0 and self.pOrders == 0:
             self.cancelOrders()
             try:
                 self.stdS = self.stdSpread.std()[0]
@@ -57,13 +57,13 @@ class mliu420_blazeit(TradingAgent):
                 self.stdS = 50
             if not(self.close):
                 self.state = 'AWAITING_SPREAD'
-            else:
-                self.dump_shares()
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
         else:
             self.wait -= 1
             self.state = 'AWAITING_WAKEUP'
             self.setWakeup(currentTime + self.getWakeFrequency())
+        if self.close:
+            self.dump_shares()
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
@@ -158,6 +158,8 @@ class mliu420_blazeit(TradingAgent):
         if self.symbol in self.holdings:
             bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
             order_size = self.holdings[self.symbol]
+            print('order size',order_size)
+            print('ask',ask)
             if order_size > 0:
                 if bid:
                     self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
