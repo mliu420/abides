@@ -133,10 +133,11 @@ class mliu420_blazeit(TradingAgent):
         if self.symbol in self.holdings and len(self.orders) == 0:
             bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
             order_size = self.holdings[self.symbol]
-            if order_size > 0
+            if order_size > 0:
                 if bid:
                     self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
-                elif ask:
+            if order_size < 0
+                if ask:
                     self.placeLimitOrder(self.symbol, quantity=abs(order_size), is_buy_order=True, limit_price=0)
     
     getWakeFrequency(self):
