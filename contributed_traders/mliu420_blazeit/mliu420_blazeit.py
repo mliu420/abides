@@ -107,7 +107,7 @@ class mliu420_blazeit(TradingAgent):
                         askM = askP
                         bidM = bidP
                         midP = (askM + bidM) / 2
-                        self.stdSpread = self.stdSpread.append([askM-bidM],, ignore_index=True)
+                        self.stdSpread = self.stdSpread.append([askM-bidM], ignore_index=True)
                         askP = midP + self.stdS
                         bidP = midP - self.stdS
                         print(askP)
