@@ -113,9 +113,6 @@ class mliu420_blazeit(TradingAgent):
                             pass
                         midM = (askM + bidM) / 2
                         midP = midM + self.stdS / 5 * bidVol / (bidVol + askVol) - self.stdS / 10
-                        print(midP)
-                        print(self.stdS)
-                        print(bidM)
                         bidP = math.floor(( (midP - self.stdS/2) * 3 + bidM) / 4)
                         askP = math.ceil(( (midP + self.stdS/2) * 3 + askM) / 4)
                         print('Algo Spread:',askP,bidP, askP - bidP)
