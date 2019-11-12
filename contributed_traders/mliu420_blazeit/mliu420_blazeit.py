@@ -50,6 +50,7 @@ class mliu420_blazeit(TradingAgent):
         print(self.holdings)
         print(self.markToMarket(self.holdings))
         if self.wait == 0 and self.pOrders == 0:
+            print('place1')
             self.cancelOrders()
             try:
                 self.stdS = self.stdSpread.std()[0]
@@ -58,9 +59,10 @@ class mliu420_blazeit(TradingAgent):
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
             self.state = 'AWAITING_SPREAD'
         else:
+            print('place2')
             self.wait -= 1
             self.setWakeup(currentTime + self.getWakeFrequency())
-            
+        print('place3')
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
