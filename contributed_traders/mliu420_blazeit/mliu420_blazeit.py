@@ -40,6 +40,9 @@ class mliu420_blazeit(TradingAgent):
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
+        print('true holdings??')
+        print(self.holdings)
+        print(self.markToMarket(self.holdings))
         if self.pOrders == 0:
             self.cancelOrders()
             try:
@@ -48,9 +51,6 @@ class mliu420_blazeit(TradingAgent):
                 self.stdS = 50
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
             self.state = 'AWAITING_SPREAD'
-            print('true holdings??')
-            print(self.holdings)
-            print(self.markToMarket(self.holdings))
 
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
