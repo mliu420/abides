@@ -102,9 +102,9 @@ class mliu420_blazeit(TradingAgent):
                         bidM = bidP
                         midP = (askM + bidM) / 2
                         askP = min(askM - 1, askP)
-                        askP = max(midP + 10, askP)
+                        askP = max(midP + 20, askP)
                         bidP = max(bidM + 1, bidP)
-                        bidP = min(midP - 10, bidP)
+                        bidP = min(midP - 20, bidP)
                         dist = askVol / (askVol + bidVol)
 #                         if dist > 0.65:
 #                             askP = round(0.9 * askP + (0.1) * midP)
