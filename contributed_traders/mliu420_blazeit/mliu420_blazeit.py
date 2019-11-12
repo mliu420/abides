@@ -43,22 +43,19 @@ class mliu420_blazeit(TradingAgent):
         print('true holdings??')
         print(self.holdings)
         print(self.markToMarket(self.holdings))
-        if self.pOrders == 0:
-            self.cancelOrders()
-            try:
-                self.stdS = self.stdSpread.std()[0]
-            except:
-                self.stdS = 50
-            self.getCurrentSpread(self.symbol, depth=self.depthLevels)
-            self.state = 'AWAITING_SPREAD'
+        self.cancelOrders()
+        try:
+            self.stdS = self.stdSpread.std()[0]
+        except:
+            self.stdS = 50
+        self.getCurrentSpread(self.symbol, depth=self.depthLevels)
+        self.state = 'AWAITING_SPREAD'
 
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
-        if msg.body['msg'] == 'ORDER_ACCEPTED':
-            self.pOrders -= 1
         #print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
@@ -114,10 +111,8 @@ class mliu420_blazeit(TradingAgent):
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
-                            self.pOrders += 1
                         if askVol > 0:
                             self.placeLimitOrder(self.symbol, askVol, False, askP)
-                            self.pOrders += 1
                         self.stdSpread = self.stdSpread.append([askM-bidM], ignore_index=True)
             except Exception as e:
                 print(e)
