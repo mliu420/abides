@@ -118,7 +118,7 @@ class mliu420_blazeit(TradingAgent):
                         print('Spread:',askM,bidM, askM - bidM)
                         bidVol = math.floor(max(0, self.holdings['CASH'] / midM))
                         try:
-                            askVol = math.floor(max(0,(self.holdings['CASH'] - abs(min(0,self.holdings[self.symbol]*askM))) / midM  ))
+                            askVol = math.floor(max(0,(self.holdings['CASH'] - 2*abs(min(0,self.holdings[self.symbol]*askM))) / midM  ))
                         except:
                             askVol = math.floor(max(0,self.holdings['CASH']  / midM  ) )
                         try:
