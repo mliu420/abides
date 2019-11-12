@@ -50,19 +50,14 @@ class mliu420_blazeit(TradingAgent):
         print(self.holdings)
         print(self.markToMarket(self.holdings))
         if self.wait == 0 and self.pOrders == 0:
-            print('place1')
             self.cancelOrders()
             try:
-                print('place2')
                 self.stdS = self.stdSpread.std()[0]
             except:
-                print('place3')
                 self.stdS = 50
-            print('place4')
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
             self.state = 'AWAITING_SPREAD'
         else:
-            print('place2')
             self.wait -= 1
             self.state = 'AWAITING_WAKEUP'
             self.setWakeup(currentTime + self.getWakeFrequency())
@@ -71,10 +66,8 @@ class mliu420_blazeit(TradingAgent):
         super().receiveMessage(currentTime, msg)
         
         if self.close:
-            print('place5')
             self.dump_shares()
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
-            print('place6')
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
             if dt < 15:
@@ -94,9 +87,7 @@ class mliu420_blazeit(TradingAgent):
             self.cancelOrder(order)
             
     def calculateAndOrder(self, currentTime):
-        print('place7')
         bid, ask = self.getKnownBidAsk(self.symbol, best=False)
-        print('place8')
         if bid and ask:
             sumBid = 0
             sumBidVol = 0
@@ -122,7 +113,6 @@ class mliu420_blazeit(TradingAgent):
                     if sumAskVol == self.pricingVolume and sumBidVol == self.pricingVolume:
                         break
                     print(i)
-                print('place9')  
                 if sumBidVol == sumAskVol:
                     if sumBidVol == self.pricingVolume:
                         askM = sumAsk / self.pricingVolume
@@ -134,14 +124,6 @@ class mliu420_blazeit(TradingAgent):
                             askVol = math.floor(max(0,2 * max(0,self.holdings[self.symbol])+(self.holdings['CASH'] - 2*abs(min(0,self.holdings[self.symbol]*askM))) / midM  ))
                         except:
                             askVol = math.floor(max(0,self.holdings['CASH']  / midM  ) )
-                        try:
-                            #print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
-                            #bidVol = max(0,bidVol - self.holdings[self.symbol])
-                            #askVol = max(0,askVol + self.holdings[self.symbol])
-                            #print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
-                            pass
-                        except:
-                            pass
                         print('Volumes ask and bid:',askVol,bidVol)
                         midP = midM + self.stdS / 7 * bidVol / (bidVol + askVol) - self.stdS / 14
                         bidP = math.floor( min(midP - self.stdS/1.5, bidM) )
