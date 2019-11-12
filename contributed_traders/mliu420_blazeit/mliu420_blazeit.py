@@ -47,6 +47,7 @@ class mliu420_blazeit(TradingAgent):
         print('true holdings??')
         print(self.holdings)
         print(self.markToMarket(self.holdings))
+        self.setWakeup(currentTime + self.getWakeFrequency()/2)
         if self.wait == 0:
             self.cancelOrders()
             try:
