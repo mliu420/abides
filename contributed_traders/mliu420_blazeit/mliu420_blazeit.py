@@ -60,11 +60,7 @@ class mliu420_blazeit(TradingAgent):
             
     def calculateAndOrder(self, currentTime):
         bid, ask = self.getKnownBidAsk(self.symbol, best=False)
-        print('got bid and ask')
         if bid and ask:
-            print('bid and ask')
-            print(bid)
-            print(ask)
             sumBid = 0
             sumBidVol = 0
             sumAsk = 0
@@ -94,15 +90,15 @@ class mliu420_blazeit(TradingAgent):
                         bidVol = math.floor(max(0, self.holdings['CASH']) / bidP / 2)
                         askVol = math.floor(max(0, self.holdings['CASH']) / askP / 2)
                         try:
-                            print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
+                            #print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
                             bidVol = max(0,bidVol - self.holdings[self.symbol])
                             askVol = max(0,askVol + self.holdings[self.symbol])
-                            print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
+                            #print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
                         except:
                             pass
                         midP = (askP + bidP) / 2
-                        askP = max(midP + 30, askP)
-                        bidP = min(midP - 30, bidP)
+                        askP = max(midP + 50, askP)
+                        bidP = min(midP - 50, bidP)
                         dist = askVol / (askVol + bidVol)
                         if dist > 0.65:
                             askP = round(0.9 * askP + (0.1) * midP)
