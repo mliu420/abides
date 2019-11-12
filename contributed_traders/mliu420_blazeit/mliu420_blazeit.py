@@ -42,6 +42,7 @@ class mliu420_blazeit(TradingAgent):
         super().kernelStarting(startTime)
 
     def wakeup(self, currentTime):
+        print(currentTime)
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
