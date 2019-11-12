@@ -2,19 +2,26 @@ from agent.TradingAgent import TradingAgent
 import pandas as pd
 import numpy as np
 import os
-import math
+#import math
 
 class mliu420_blazeit(TradingAgent):
+
+# Author: Mingchun Liu
+# bazeit: 
+#
+# The author of this code hereby permits it to be included as a part of the ABIDES distribution, 
+# and for it to be released under any open source license the ABIDES authors choose to release ABIDES under.
     """
-    This agent was built on the market maker agent with some caveats.
+    This agent is based on the market maker agent with some caveats.
     Prices are determined by a variable pricingVolume. Roughly the price
     of a stock is going to be the average price if to buy/sell pricingVolume
     amount of stock. This average between the buy and sell for 100 shares
-    is the price.
+    is the price. This is so that someon doesn't place a sneaky order of one stock.
+    And mess up my pricing :)
     
     My first iteration of this agent tried to be fancy with calculations
     of price happening at different times to speed up the order placing process.
-    This caused issues with too many iterations.
+    This caused timing issues so I've simplified it drastically.
     """
 
     def __init__(self, id, name, type, symbol, starting_cash, min_size, max_size , wake_up_freq='10s',
@@ -134,15 +141,15 @@ class mliu420_blazeit(TradingAgent):
                         bidM = sumBid / self.pricingVolume
                         midM = (askM + bidM) / 2
                         print('Spread:',askM,bidM, askM - bidM)
-                        bidVol = math.floor(max(0, self.holdings['CASH'] / midM))
+                        bidVol = np.floor(max(0, self.holdings['CASH'] / midM))
                         try:
-                            askVol = math.floor(max(0,2 * max(0,self.holdings[self.symbol])+(self.holdings['CASH'] - 2*abs(min(0,self.holdings[self.symbol]*askM))) / midM  ))
+                            askVol = np.floor(max(0,2 * max(0,self.holdings[self.symbol])+(self.holdings['CASH'] - 2*abs(min(0,self.holdings[self.symbol]*askM))) / midM  ))
                         except:
-                            askVol = math.floor(max(0,self.holdings['CASH']  / midM  ) )
+                            askVol = np.floor(max(0,self.holdings['CASH']  / midM  ) )
                         print('Volumes ask and bid:',askVol,bidVol)
                         midP = midM + self.stdS / 7 * bidVol / (bidVol + askVol) - self.stdS / 14
-                        bidP = math.floor( min(midP - self.stdS/1.5, bidM + 1) )
-                        askP = math.ceil( max(midP + self.stdS/1.5, askM - 1) )
+                        bidP = np.floor( min(midP - self.stdS/1.5, bidM + 1) )
+                        askP = np.ceil( max(midP + self.stdS/1.5, askM - 1) )
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
@@ -171,3 +178,5 @@ class mliu420_blazeit(TradingAgent):
     
     def getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)
+    def author(self):              
+        return 'mliu420' # replace tb34 with your Georgia Tech username  
