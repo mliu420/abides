@@ -54,8 +54,12 @@ class mliu420_blazeit(TradingAgent):
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
-        if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
-            self.calculateAndOrder(currentTime)
+        
+        dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
+            if dt < 15:
+                self.dump_shares()
+            elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
+                self.calculateAndOrder(currentTime)
         #print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
@@ -119,5 +123,17 @@ class mliu420_blazeit(TradingAgent):
                 pass
             self.state = 'AWAITING_WAKEUP' #place orders and await execution
             self.setWakeup(currentTime + self.getWakeFrequency())
-    def getWakeFrequency(self):
+            
+    def dump_shares(self):
+        # get rid of any outstanding shares we have
+        if self.symbol in self.holdings and len(self.orders) == 0:
+            bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
+            order_size = self.holdings[self.symbol]
+            if order_size > 0
+                if bid:
+                    self.placeLimitOrder(self.symbol, quantity=order_size, is_buy_order=False, limit_price=0)
+                elif ask:
+                    self.placeLimitOrder(self.symbol, quantity=abs(order_size), is_buy_order=True, limit_price=0)
+    
+    getWakeFrequency(self):
         return pd.Timedelta(self.wake_up_freq)
