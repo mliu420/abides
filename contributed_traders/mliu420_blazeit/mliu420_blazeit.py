@@ -103,10 +103,11 @@ class mliu420_blazeit(TradingAgent):
                         bidM = bidP
                         midP = (askM + bidM) / 2
                         askP = min(askM - 1, askP)
-                        askP = max(midP + 100, askP)
+                        askP = max(midP + 80, askP)
                         bidP = max(bidM + 1, bidP)
-                        bidP = min(midP - 100, bidP)
+                        bidP = min(midP - 80, bidP)
                         dist = askVol / (askVol + bidVol)
+                        print(dist)
                         askP = round(askP - 30 * dist)
                         bidP = round(bidP + 30 * (1-dist))
                         print('Algo Spread:',askP,bidP, askP - bidP)
