@@ -104,13 +104,12 @@ class mliu420_blazeit(TradingAgent):
                             #print('bidvol, askvol, jpm',bidVol, askVol, self.holdings)
                         except:
                             pass
-                        print(1)
                         midM = (askM + bidM) / 2
-                        print(2)
                         midP = midM + self.stdS / 5 * bidVol / (bidVol + askVol) - self.stdS / 10
-                        print(3)
+                        print(midP)
+                        print(self.stdS)
+                        print(bidM)
                         bidP = math.floor(( (midP - self.stdS/2) * 3 + bidM) / 4)
-                        print(4)
                         askP = math.ceil(( (midP + self.stdS/2) * 3 + askM) / 4)
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
