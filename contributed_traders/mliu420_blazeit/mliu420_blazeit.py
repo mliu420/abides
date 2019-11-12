@@ -145,7 +145,7 @@ class mliu420_blazeit(TradingAgent):
             
     def dump_shares(self):
         # get rid of any outstanding shares we have
-        if self.symbol in self.holdings
+        if self.symbol in self.holdings:
             bid, _, ask, _ = self.getKnownBidAsk(self.symbol)
             order_size = self.holdings[self.symbol]
             if order_size > 0:
