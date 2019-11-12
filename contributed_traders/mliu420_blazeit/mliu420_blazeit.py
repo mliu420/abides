@@ -43,7 +43,7 @@ class mliu420_blazeit(TradingAgent):
         if 1==1:#self.pOrders == 0:
             self.cancelOrders()
             try:
-                self.stdS = self.stdSpread
+                self.stdS = self.stdSpread.std()[0]
             except:
                 self.stdS = 50
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
