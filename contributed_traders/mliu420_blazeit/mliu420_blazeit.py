@@ -32,6 +32,7 @@ class mliu420_blazeit(TradingAgent):
         self.starting_cash = starting_cash
         self.pOrders = 0
         self.stdSpread = pd.DataFrame([50, 51])
+        self.close = False
 
     def kernelStarting(self, startTime):
         super().kernelStarting(startTime)
@@ -55,11 +56,14 @@ class mliu420_blazeit(TradingAgent):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
         
+        if self.close:
+            self.dump_shares()
+        elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
+            self.calculateAndOrder(currentTime)
         dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
-            if dt < 15:
-                self.dump_shares()
-            elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
-                self.calculateAndOrder(currentTime)
+        if dt < 15:
+            self.close()
+            self.dump_shares()
         #print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
