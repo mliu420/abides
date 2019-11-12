@@ -112,9 +112,11 @@ class mliu420_blazeit(TradingAgent):
                         bidM = bidP
                         midP = (askM + bidM) / 2
                         self.stdSpread = self.stdSpread.append([askM-bidM], ignore_index=True)
+                        print('status:')
+                        print(self.fake,self.buy)
                         if self.buy:
                             if self.fake:
-                                if askM - bidM > self.stdS:
+                                if askM - bidM > self.stdS/2:
                                     if bid[0][0] < midP:
                                         self.fakePrice = ask[0][0]-1
                                         self.placeLimitOrder(self.symbol, 1, True, self.fakePrice)
@@ -125,7 +127,7 @@ class mliu420_blazeit(TradingAgent):
                                 self.buy = False
                         else:
                             if self.fake:
-                                if askM - bidM > self.stdS:
+                                if askM - bidM > self.stdS/2:
                                     if ask[0][0] > midP:
                                         self.fakePrice = bid[0][0]+1
                                         self.placeLimitOrder(self.symbol, 1, False, self.fakePrice)
@@ -137,6 +139,7 @@ class mliu420_blazeit(TradingAgent):
             except Exception as e:
                 print(e)
                 pass
+            
             self.state = 'AWAITING_WAKEUP' #place orders and await execution
             self.setWakeup(currentTime + self.getWakeFrequency())
     def getWakeFrequency(self):
