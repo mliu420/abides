@@ -66,15 +66,16 @@ class mliu420_blazeit(TradingAgent):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
         super().receiveMessage(currentTime, msg)
         
-        if self.close:
-            try:
-                if self.holdings[self.symbol] != 0:
-                    print('dumping shares')
-                    self.cancelOrders()
-                    self.dump_shares()
-                    self.state = 'AWAITING_WAKEUP'
-            except:
-                pass
+        if self.close
+            if msg.body['msg'] == 'ORDER_EXECUTED':
+                try:
+                    if self.holdings[self.symbol] != 0:
+                        print('dumping shares')
+                        self.cancelOrders()
+                        self.dump_shares()
+                        self.state = 'AWAITING_WAKEUP'
+                except:
+                    pass
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
