@@ -119,7 +119,7 @@ class mliu420_blazeit(TradingAgent):
                         bidM = sumBid / self.pricingVolume
                         print('Spread:',askM,bidM, askM - bidM)
                         bidVol = math.floor(max(0, 4000000 / askM / 4))
-                        askVol = math.floor(max(0, 4000000) / bidM / 4))
+                        askVol = math.floor(max(0, 4000000 / bidM / 4))
                         try:
                             #print('bidvol, askvol, jpm, cash',bidVol, askVol, self.holdings[self.symbol],self.holdings['CASH'])
                             bidVol = max(bidVol,bidVol - self.holdings[self.symbol])
