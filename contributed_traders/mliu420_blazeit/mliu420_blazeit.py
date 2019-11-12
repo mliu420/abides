@@ -52,7 +52,7 @@ class mliu420_blazeit(TradingAgent):
             self.calculateAndOrder(currentTime)
 #         if msg.body['msg'] = 'ORDER_ACCEPTED':
 #             self.pOrders -= 1
-        print(msg)
+        #print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
         for _, order in self.orders.items():
@@ -97,8 +97,10 @@ class mliu420_blazeit(TradingAgent):
                         except:
                             pass
                         midP = (askP + bidP) / 2
-                        askP = max(midP + 50, askP)
-                        bidP = min(midP - 50, bidP)
+                        askP = max(midP + 30, askP)
+                        askP = min(midP + 100, askP)
+                        bidP = min(midP - 30, bidP)
+                        bidP = max(midP - 100, bidP)
                         dist = askVol / (askVol + bidVol)
                         if dist > 0.65:
                             askP = round(0.9 * askP + (0.1) * midP)
