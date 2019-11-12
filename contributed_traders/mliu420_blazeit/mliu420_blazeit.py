@@ -70,8 +70,9 @@ class mliu420_blazeit(TradingAgent):
         elif self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
             dt = (self.mkt_close - currentTime) / np.timedelta64(1, 'm')
-            if dt < 5:
+            if dt < 15:
                 self.close = True
+                print('DUMP SHARES')
                 self.dump_shares()
         elif self.state == 'AWAITING_WAKEUP' and msg.body['msg'] == 'ORDER_EXECUTED':
             if len(self.orders) > 0 and self.wait == 0:
@@ -95,7 +96,6 @@ class mliu420_blazeit(TradingAgent):
             sumAskVol = 0
             try:
                 for i in range(self.depthLevels):
-                    print(i)
                     if sumBidVol < self.pricingVolume:
                         if sumBidVol + bid[i][1] > self.pricingVolume:
                             sumBid += (self.pricingVolume - sumBidVol) * bid[i][0]
@@ -112,7 +112,6 @@ class mliu420_blazeit(TradingAgent):
                             sumAskVol += ask[i][1]
                     if sumAskVol == self.pricingVolume and sumBidVol == self.pricingVolume:
                         break
-                    print(i)
                 if sumBidVol == sumAskVol:
                     if sumBidVol == self.pricingVolume:
                         askM = sumAsk / self.pricingVolume
