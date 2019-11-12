@@ -80,6 +80,8 @@ class mliu420_blazeit(TradingAgent):
                 self.wait = 1
             else:
                 self.wait = 0
+        elif msg.body['msg'] = 'ORDER_ACCEPTED':
+            self.pOrders -= 1
         #print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
@@ -132,8 +134,10 @@ class mliu420_blazeit(TradingAgent):
                         print('Algo Spread:',askP,bidP, askP - bidP)
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
+                            self.pOrders += 1
                         if askVol > 0:
                             self.placeLimitOrder(self.symbol, askVol, False, askP)
+                            self.pOrders += 1
                         self.stdSpread = self.stdSpread.append([askM-bidM], ignore_index=True)
             except Exception as e:
                 print(e)
