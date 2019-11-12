@@ -66,9 +66,6 @@ class mliu420_blazeit(TradingAgent):
             if dt < 15:
                 self.close = True
                 self.dump_shares()
-            else:
-        elif msg.body['msg'] == "WHEN_MKT_CLOSE":
-              self.mkt_close = msg.body['data']
         #print(msg)
     def cancelOrders(self):
         """ cancels all resting limit orders placed by the market maker """
