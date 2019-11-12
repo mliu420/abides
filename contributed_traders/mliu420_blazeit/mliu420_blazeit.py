@@ -39,7 +39,7 @@ class mliu420_blazeit(TradingAgent):
         """ Agent wakeup is determined by self.wake_up_freq """
         can_trade = super().wakeup(currentTime)
         if not can_trade: return
-        if self.pOrders == 0:
+        if 1==1:#self.pOrders == 0:
             self.cancelOrders()
             self.getCurrentSpread(self.symbol, depth=self.depthLevels)
             self.state = 'AWAITING_SPREAD'
