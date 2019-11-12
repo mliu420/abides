@@ -52,7 +52,7 @@ class mliu420_blazeit(TradingAgent):
         super().receiveMessage(currentTime, msg)
         if self.state == 'AWAITING_SPREAD' and msg.body['msg'] == 'QUERY_SPREAD':
             self.calculateAndOrder(currentTime)
-        if msg.body['msg'] = 'ORDER_ACCEPTED':
+        if msg.body['msg'] == 'ORDER_ACCEPTED':
             self.pOrders -= 1
         #print(msg)
     def cancelOrders(self):
