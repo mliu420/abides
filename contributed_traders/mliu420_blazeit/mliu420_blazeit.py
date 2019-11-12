@@ -101,6 +101,8 @@ class mliu420_blazeit(TradingAgent):
                         except:
                             pass
                         midP = (askP + bidP) / 2
+                        askP = min(midP + 10, askP)
+                        bidP = max(midP - 10, bidP)
                         dist = askVol / (askVol + bidVol)
                         if dist > 0.7:
                             askP = round(0.9 * askP + (0.1) * midP)
@@ -109,8 +111,9 @@ class mliu420_blazeit(TradingAgent):
                             askP = round(1.1 * askP + (-0.1) * midP)
                             bidP = round(0.9 * bidP + (0.1) * midP)
                         else:
-                            askP = round(askP) - 1
-                            bidP = round(bidP) + 1
+                            askP = round(askP)
+                            bidP = round(bidP)
+                        
                         
                         if bidVol > 0:
                             self.placeLimitOrder(self.symbol, bidVol, True, bidP)
