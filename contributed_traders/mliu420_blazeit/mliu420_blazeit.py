@@ -44,6 +44,7 @@ class mliu420_blazeit(TradingAgent):
         self.state = 'AWAITING_SPREAD'
         print('true holdings??')
         print(self.holdings)
+        print(self.markToMarket(self.holdings))
 
     def receiveMessage(self, currentTime, msg):
         """ Market Maker actions are determined after obtaining the bids and asks in the LOB """
@@ -122,7 +123,6 @@ class mliu420_blazeit(TradingAgent):
                         if askVol > 0:
                             self.placeLimitOrder(self.symbol, askVol, False, askP)
                             #self.pOrders += 1
-                        print('placed order')
             except Exception as e:
                 print(e)
                 pass
