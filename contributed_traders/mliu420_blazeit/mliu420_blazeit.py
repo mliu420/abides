@@ -80,7 +80,7 @@ class mliu420_blazeit(TradingAgent):
                 self.wait = 1
             else:
                 self.wait = 0
-        elif msg.body['msg'] = 'ORDER_ACCEPTED':
+        elif msg.body['msg'] == 'ORDER_ACCEPTED':
             self.pOrders -= 1
         #print(msg)
     def cancelOrders(self):
